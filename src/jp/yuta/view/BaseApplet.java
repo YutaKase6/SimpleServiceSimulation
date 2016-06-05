@@ -1,7 +1,6 @@
 package jp.yuta.view;
 
-import jp.yuta.model.AbstractActor;
-import jp.yuta.model.ConsumeActor;
+import jp.yuta.model.Actor;
 
 import javax.swing.*;
 
@@ -15,7 +14,7 @@ import static jp.yuta.util.Config.*;
  */
 public class BaseApplet extends JApplet {
 
-    private List<ConsumeActor> actors;
+    private List<Actor> actors;
 
     @Override
     public void init() {
@@ -35,13 +34,24 @@ public class BaseApplet extends JApplet {
     }
 
     private void draw(Graphics2D buffer) {
-        for (AbstractActor actor : actors) {
-            int[] pos = actor.getPos();
-            buffer.fillOval(pos[0] * CANVAS_RATE, pos[1] * CANVAS_RATE, CANVAS_RATE, CANVAS_RATE);
+        int[] pos;
+        for (Actor actor : actors) {
+            pos = actor.getPos();
+            buffer.setColor(actor.getColor());
+            if (actor.isProvider()) {
+                buffer.fillRect(pos[0] * CANVAS_RATE, pos[1] * CANVAS_RATE, CANVAS_RATE*2, CANVAS_RATE*2);
+            } else {
+                buffer.fillOval(pos[0] * CANVAS_RATE, pos[1] * CANVAS_RATE, CANVAS_RATE, CANVAS_RATE);
+            }
+        }
+        for(int i = 0; i < N_Provider; i++){
+            pos = actors.get(i).getPos();
+            buffer.setColor(Color.black);
+            buffer.drawRect(pos[0] * CANVAS_RATE, pos[1] * CANVAS_RATE, CANVAS_RATE*2, CANVAS_RATE*2);
         }
     }
 
-    public void setActors(List<ConsumeActor> actors) {
+    public void setActors(List<Actor> actors) {
         this.actors = actors;
     }
 }
