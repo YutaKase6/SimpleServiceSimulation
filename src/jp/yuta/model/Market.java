@@ -13,7 +13,17 @@ public class Market {
         this.actors = actors;
     }
 
+    public int countConsumer(int id){
+        int count = 0;
+        for(Actor actor:this.actors){
+            if(actor.getSelectProviderId() == id){
+                count++;
+            }
+        }
+        return count;
+    }
+
     public List<Actor> getActors(){
-        return actors;
+        return this.actors;
     }
 }

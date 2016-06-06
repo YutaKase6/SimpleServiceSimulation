@@ -32,6 +32,20 @@ public final class CalcUtil {
     }
 
     /**
+     * 乱数を生成し返す(正規分布)
+     *
+     * @param mu 平均
+     * @param sd 標準偏差
+     * @return 乱数
+     */
+    public static double generateRandomGaussian(double mu, double sd) {
+        if (randomGenerator == null) {
+            randomGenerator = new Random(Config.RANDOM_SEED);
+        }
+        return randomGenerator.nextGaussian() * sd + mu;
+    }
+
+    /**
      * 距離計算
      *
      * @param posA 座標A
