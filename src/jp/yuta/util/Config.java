@@ -8,8 +8,12 @@ public final class Config {
     private Config(){}
 
     public static final int DIM = 2;
-    public static final int N_ACTOR = 40000;
+    public static final int N_ACTOR = 10000;
     public static final int N_Provider = 10;
+
+    public static final int MIN_PRICE = 0;
+    public static final int MAX_PRICE = 10000;
+    public static final int DELTA_PRICE = 100;
 
     public static final int RANDOM_SEED = 625;
 
