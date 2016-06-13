@@ -1,6 +1,6 @@
 package jp.yuta.view;
 
-import jp.yuta.model.Market;
+import jp.yuta.simulation.MarketSimulation;
 
 import javax.swing.*;
 
@@ -13,7 +13,7 @@ import static jp.yuta.util.Config.*;
  */
 public class AppletManager {
 
-    private static BaseApplet applet;
+    private static ActorApplet applet;
     private static InfoApplet infoApplet;
 
     private AppletManager() {
@@ -24,12 +24,17 @@ public class AppletManager {
         infoApplet.repaint();
     }
 
-    public static void initFrame(Market market) {
+    public static void setProviderId(int providerId){
+        applet.setNowProviderId(providerId);
+        infoApplet.setNowProviderId(providerId);
+    }
+
+    public static void initFrame(MarketSimulation marketSimulation) {
         JFrame mainFrame = new JFrame("Simple Simulation");
-        applet = new BaseApplet();
+        applet = new ActorApplet();
         infoApplet = new InfoApplet();
-        applet.setActors(market.getActors());
-        infoApplet.setActors(market.getActors());
+        applet.setActors(marketSimulation.getActors());
+        infoApplet.setActors(marketSimulation.getActors());
 
         mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         mainFrame.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);

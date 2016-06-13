@@ -22,12 +22,14 @@ public class Actor {
     private double operantResource;
     // 交換価格
     private int price = 0;
-    private int currentPrice = 0;
     // 売上最大の価格
     private int bestPrice = 0;
     // 顧客数
     private int nConsumer = 0;
+    private int bestNConsumer = 0;
+    // 最大売上
     private int bestPayoff = 0;
+    private boolean isChangePrice = true;
 
     // 各Providerに対する評価(能力に対する相対評価)
     private List<Double> scoreList = new ArrayList<>(N_Provider);
@@ -35,6 +37,7 @@ public class Actor {
     private List<Double> valueList = new ArrayList<>(N_Provider);
     // 移動する際、単位距離あたりどれだけコストがかかるか
     private double moveCost;
+    // 価値最大となるProviderのID
     private int selectProviderId;
 
     // 色
@@ -54,10 +57,9 @@ public class Actor {
 
     private void initProvider() {
         // 能力を乱数で設定
-        this.operantResource = generateRandomDouble(0, 6000);
+        this.operantResource = generateRandomDouble(MIN_OPERANT_RESOURCE, MAX_OPERANT_RESOURCE);
         // 交換価格を設定
         this.price = MIN_PRICE;
-        this.currentPrice = this.price;
         this.bestPrice = this.price;
         // 色を決定
         this.color = colorList.get(this.id % colorList.size());
@@ -67,15 +69,16 @@ public class Actor {
     private void initConsumer() {
         // 各Providerへの評価(能力に対する相対評価)
         for (int i = 0; i < N_Provider; i++) {
-            this.scoreList.add(generateRandomGaussian(0, 1000));
+            this.scoreList.add(generateRandomGaussian(SCORE_MU, SCORE_SD));
             this.valueList.add(0.0);
         }
         // 移動コスト
-        this.moveCost = generateRandomGaussian(100, 50);
+        this.moveCost = generateRandomGaussian(MOVE_COST_MU, MOVE_COST_SD);
     }
 
     /**
      * Providerに対する価値を再計算
+     *
      * @param provider 再計算する対象のProvider
      */
     public void updateValue(Actor provider) {
@@ -93,7 +96,7 @@ public class Actor {
     /**
      * 最も価値の得られるProviderを再選択
      */
-    public void updateSelectProvider(){
+    public void updateSelectProvider() {
         // 最も価値を得られるProviderと同じ色に設定
         this.selectProviderId = this.getMaxIndex(valueList);
         this.color = colorList.get(this.selectProviderId);
@@ -115,6 +118,7 @@ public class Actor {
 
     /**
      * 売上を計算、最高売上であれば価格を保存
+     *
      * @return 売上
      */
     public int calcPayoff() {
@@ -122,6 +126,7 @@ public class Actor {
         if (this.bestPayoff < payoff) {
             this.bestPayoff = payoff;
             this.bestPrice = this.price;
+            this.bestNConsumer = this.nConsumer;
         }
         return payoff;
     }
@@ -181,14 +186,6 @@ public class Actor {
         this.nConsumer = nConsumer;
     }
 
-    public void setCurrentPrice(int currentPrice) {
-        this.currentPrice = currentPrice;
-    }
-
-    public int getCurrentPrice() {
-        return this.currentPrice;
-    }
-
     public int getBestPrice() {
         return this.bestPrice;
     }
@@ -197,4 +194,15 @@ public class Actor {
         return this.bestPayoff;
     }
 
+    public int getBestNConsumer() {
+        return bestNConsumer;
+    }
+
+    public void setChangePrice(boolean changePrice) {
+        this.isChangePrice = changePrice;
+    }
+
+    public boolean isChangePrice() {
+        return isChangePrice;
+    }
 }

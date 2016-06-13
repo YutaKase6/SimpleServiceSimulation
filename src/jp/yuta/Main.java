@@ -1,6 +1,6 @@
 package jp.yuta;
 
-import jp.yuta.model.Market;
+import jp.yuta.simulation.MarketSimulation;
 import jp.yuta.view.AppletManager;
 
 /**
@@ -8,13 +8,13 @@ import jp.yuta.view.AppletManager;
  */
 public class Main {
 
-    private static Market market;
+    private static MarketSimulation marketSimulation;
 
     public static void main(String[] args) {
-        market = new Market();
+        marketSimulation = new MarketSimulation();
         // Applet初期設定
-        AppletManager.initFrame(market);
+        AppletManager.initFrame(marketSimulation);
         // simulation start
-        Simulation.simulate(market);
+        marketSimulation.mainLoop();
     }
 }

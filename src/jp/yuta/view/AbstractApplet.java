@@ -14,6 +14,7 @@ import static jp.yuta.util.Config.*;
 public abstract class AbstractApplet extends JApplet {
 
     public List<Actor> actors;
+    public int nowProviderId = -1;
 
     @Override
     public void init() {
@@ -38,4 +39,7 @@ public abstract class AbstractApplet extends JApplet {
         this.actors = actors;
     }
 
+    public void setNowProviderId(int nowProviderId) {
+        this.nowProviderId = nowProviderId;
+    }
 }

@@ -9,7 +9,8 @@ import static jp.yuta.util.Config.*;
 /**
  * Created by yutakase on 2016/06/02.
  */
-public class BaseApplet extends AbstractApplet {
+public class ActorApplet extends AbstractApplet {
+
 
     @Override
     public void draw(Graphics2D buffer) {
@@ -20,14 +21,23 @@ public class BaseApplet extends AbstractApplet {
             pos = actor.getPos();
             buffer.setColor(actor.getColor());
             if (actor.isProvider()) {
-                // 座標適当、とりあえずちょっと大きく
-                buffer.setColor(Color.black);
-                buffer.fillRect(pos[0] * CANVAS_RATE - CANVAS_RATE, pos[1] * CANVAS_RATE - CANVAS_RATE, CANVAS_RATE * 2, CANVAS_RATE * 2);
-                buffer.setColor(actor.getColor());
-                buffer.fillRect(pos[0] * CANVAS_RATE - CANVAS_RATE / 2, pos[1] * CANVAS_RATE - CANVAS_RATE / 2, CANVAS_RATE, CANVAS_RATE);
+                // シミュレーション中のProviderを大きく表示
+                int size = i == nowProviderId ? CANVAS_RATE * 4 : CANVAS_RATE * 2;
+                drawProvider(buffer, pos[0], pos[1], size, actor.getColor());
             } else {
                 buffer.fillOval(pos[0] * CANVAS_RATE - CANVAS_RATE / 2, pos[1] * CANVAS_RATE - CANVAS_RATE / 2, CANVAS_RATE, CANVAS_RATE);
             }
         }
     }
+
+    /**
+     * Providerを描画
+     */
+    private void drawProvider(Graphics2D g, int x, int y, int size, Color color) {
+        g.setColor(Color.black);
+        g.fillRect(x * CANVAS_RATE - size / 2, y * CANVAS_RATE - size / 2, size, size);
+        g.setColor(color);
+        g.fillRect(x * CANVAS_RATE - size / 4, y * CANVAS_RATE - size / 4, size / 2, size / 2);
+    }
+
 }
