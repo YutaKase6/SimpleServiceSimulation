@@ -51,8 +51,8 @@ public class MarketSimulation extends Simulation {
     public boolean isSimulationFinish() {
 //        String input = JOptionPane.showInputDialog("next?");
 //        return input.equals("y");
-        for(Actor provider : this.actors){
-            if(provider.isProvider() && provider.isChangePrice()){
+        for (Actor provider : this.actors) {
+            if (provider.isProvider() && provider.isChangePrice()) {
                 return true;
             }
         }
@@ -77,14 +77,14 @@ public class MarketSimulation extends Simulation {
             price += DELTA_PRICE;
 
             try {
-                Thread.sleep(0);
+                Thread.sleep(STEP_SLEEP_TIME);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
         // 他のProviderのシミュレーションのために、価格を計算前の価格に戻す
         provider.setPrice(currentPrice);
-        if(provider.getBestPrice() == currentPrice){
+        if (provider.getBestPrice() == currentPrice) {
             provider.setChangePrice(false);
         }
     }
@@ -118,6 +118,7 @@ public class MarketSimulation extends Simulation {
         long count = this.actors.stream().parallel()
                 .filter(actor -> actor.getSelectProviderId() == id)
                 .count();
+        count = (count > MAX_CONSUMERS) ? MAX_CONSUMERS : count;
         return (int) count;
     }
 

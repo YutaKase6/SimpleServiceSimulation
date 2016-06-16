@@ -98,7 +98,7 @@ public class Actor {
      */
     public void updateSelectProvider() {
         // 最も価値を得られるProviderと同じ色に設定
-        this.selectProviderId = this.getMaxIndex(valueList);
+        this.selectProviderId = getMaxIndex(valueList);
         this.color = colorList.get(this.selectProviderId);
     }
 
@@ -129,25 +129,6 @@ public class Actor {
             this.bestNConsumer = this.nConsumer;
         }
         return payoff;
-    }
-
-    /**
-     * 引数のリストの中から最大値のインデックスを返す
-     *
-     * @param list リスト
-     * @return 最大値のインデックス
-     */
-    private int getMaxIndex(List<Double> list) {
-        double max = Double.NEGATIVE_INFINITY;
-        int maxIndex = -1;
-        for (int i = 0; i < list.size(); i++) {
-            double n = list.get(i);
-            if (max < n) {
-                max = n;
-                maxIndex = i;
-            }
-        }
-        return maxIndex;
     }
 
     public int getId() {

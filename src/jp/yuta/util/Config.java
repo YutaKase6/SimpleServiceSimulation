@@ -7,6 +7,8 @@ package jp.yuta.util;
 public final class Config {
     private Config(){}
 
+    public static final int RANDOM_SEED = 625;
+
     public static final int DIM = 2;
     public static final int N_ACTOR = 20000;
     public static final int N_Provider = 10;
@@ -17,12 +19,12 @@ public final class Config {
     public static final int SCORE_SD = 1000;
     public static final int MOVE_COST_MU = 100;
     public static final int MOVE_COST_SD = 50;
-
     public static final int MIN_PRICE = 0;
-    public static final int MAX_PRICE = 5000;
+    public static final int MAX_PRICE = 10000;
     public static final int DELTA_PRICE = 100;
+    public static final int MAX_CONSUMERS = 20000;
 
-    public static final int RANDOM_SEED = 625;
+    public static final int STEP_SLEEP_TIME = 0;
 
     public static final int WINDOW_WIDTH = 1300;
     public static final int WINDOW_HEIGHT = 660;
