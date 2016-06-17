@@ -9,6 +9,7 @@ public final class Config {
 
     public static final int RANDOM_SEED = 625;
 
+    public static final int N_SERVICE = 1;
     public static final int DIM = 2;
     public static final int N_ACTOR = 20000;
     public static final int N_Provider = 10;

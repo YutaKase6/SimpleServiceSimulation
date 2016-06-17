@@ -30,8 +30,6 @@ public class Status {
     private List<Double> scoreList = new ArrayList<>(N_Provider);
     // 各Providerに対する値段と距離を踏まえた価値(消費したコストに対してどれだけ価値を得られたか)
     private List<Double> valueList = new ArrayList<>(N_Provider);
-    // 移動する際、単位距離あたりどれだけコストがかかるか
-    private double moveCost;
     // 価値最大となるProviderのID
     private int selectProviderId;
 
@@ -51,8 +49,6 @@ public class Status {
         // 交換価格を設定
         this.price = MIN_PRICE;
         this.bestPrice = this.price;
-//         色を決定
-//        this.color = colorList.get(this.id % colorList.size());
     }
 
     private void initConsumer() {
@@ -61,7 +57,76 @@ public class Status {
             this.scoreList.add(generateRandomGaussian(SCORE_MU, SCORE_SD));
             this.valueList.add(0.0);
         }
-        // 移動コスト
-        this.moveCost = generateRandomGaussian(MOVE_COST_MU, MOVE_COST_SD);
+    }
+
+    /**
+     * 売上を計算、最高売上であれば価格を保存
+     *
+     * @return 売上
+     */
+    public int calcPayoff() {
+        int payoff = this.nConsumer * this.price;
+        if (this.bestPayoff < payoff) {
+            this.bestPayoff = payoff;
+            this.bestPrice = this.price;
+            this.bestNConsumer = this.nConsumer;
+        }
+        return payoff;
+    }
+
+    public boolean isProvider() {
+        return this.isProvider;
+    }
+
+    public double getOperantResource() {
+        return this.operantResource;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public int getPrice() {
+        return this.price;
+    }
+
+    public void setSelectProviderId(int selectProviderId) {
+        this.selectProviderId = selectProviderId;
+    }
+
+    public int getSelectProviderId() {
+        return selectProviderId;
+    }
+
+    public void setnConsumer(int nConsumer) {
+        this.nConsumer = nConsumer;
+    }
+
+    public int getBestPrice() {
+        return this.bestPrice;
+    }
+
+    public int getBestPayoff() {
+        return this.bestPayoff;
+    }
+
+    public int getBestNConsumer() {
+        return bestNConsumer;
+    }
+
+    public void setChangePrice(boolean changePrice) {
+        this.isChangePrice = changePrice;
+    }
+
+    public boolean isChangePrice() {
+        return isChangePrice;
+    }
+
+    public List<Double> getScoreList() {
+        return this.scoreList;
+    }
+
+    public List<Double> getValueList() {
+        return this.valueList;
     }
 }
