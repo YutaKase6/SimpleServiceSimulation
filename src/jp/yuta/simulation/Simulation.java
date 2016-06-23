@@ -12,8 +12,14 @@ public abstract class Simulation {
         while (isSimulationFinish()){
             step();
             stepCount++;
+            System.out.println(stepCount);
         }
+//        String input = JOptionPane.showInputDialog("hoge");
+//        int id = Integer.parseInt(input);
+//        AppletManager.applet.hoge(id);
     }
+
+    public abstract void init();
 
     public abstract void step();
 

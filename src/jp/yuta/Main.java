@@ -19,6 +19,22 @@ public class Main {
     public static void main(String[] args) {
         // Applet初期設定
         AppletManager.initFrame();
+        simulation();
+//        test();
+    }
+
+    private static void simulation(){
+        marketSimulation = new MarketSimulation();
+        AppletManager.setActors(marketSimulation.getActors());
+        for(int i = 0; i < 1;i++){
+            marketSimulation.mainLoop();
+            // exchange
+            // recalc score
+        }
+        marketSimulation.test();
+    }
+
+    private static void test(){
         for (int i = 0; i < N_TEST; i++) {
             marketSimulation = new MarketSimulation();
             AppletManager.setActors(marketSimulation.getActors());
@@ -31,5 +47,8 @@ public class Main {
         int sum = countList.stream().mapToInt(Integer::intValue).sum();
         double ave = sum / countList.size();
         System.out.println(ave);
+
     }
+
+
 }

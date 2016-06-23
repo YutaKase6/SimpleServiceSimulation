@@ -28,11 +28,11 @@ public class MyColor {
             new Color(255, 193, 7, TRANSPARENT),         /*amber*/
 //            new Color(255, 152, 0, TRANSPARENT),         /*orange*/
             new Color(255, 87, 34, TRANSPARENT),         /*deep orange*/
-//            new Color(121, 85, 72, TRANSPARENT),         /*brown*/
-            new Color(158, 158, 158, TRANSPARENT),       /*grey*/
+            new Color(121, 85, 72, TRANSPARENT),         /*brown*/
+//            new Color(158, 158, 158, TRANSPARENT),       /*grey*/
 //            new Color(96, 125, 139, TRANSPARENT),        /*blue grey*/
             new Color(0, 0, 0, TRANSPARENT)              /*black*/
-            );
+    );
 
     private MyColor() {
     }

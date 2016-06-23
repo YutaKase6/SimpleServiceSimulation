@@ -36,9 +36,9 @@ public class Status {
 
     public Status(boolean isProvider) {
         this.isProvider = isProvider;
-        if(this.isProvider){
-           this.initProvider();
-        }else {
+        if (this.isProvider) {
+            this.initProvider();
+        } else {
             this.initConsumer();
         }
     }
@@ -65,13 +65,30 @@ public class Status {
      * @return 売上
      */
     public int calcPayoff() {
-        int payoff = this.nConsumer * this.price;
+        int payoff;
+        if (this.nConsumer > MAX_CONSUMERS) {
+            payoff = MAX_CONSUMERS * this.price;
+        } else {
+            payoff = this.nConsumer * this.price;
+        }
         if (this.bestPayoff < payoff) {
             this.bestPayoff = payoff;
             this.bestPrice = this.price;
             this.bestNConsumer = this.nConsumer;
         }
         return payoff;
+    }
+
+    // TODO: 2016/06/23 名前が雑、価格シミュレーション前に一度呼ばれる
+    public void resetPrice() {
+        this.bestNConsumer = 0;
+        this.bestPayoff = 0;
+        this.bestPrice = 0;
+    }
+
+    // TODO: 2016/06/23 価値再計算
+    public void reCalcScoreList() {
+//        scoreList.stream().parallel().forEach();
     }
 
     public boolean isProvider() {

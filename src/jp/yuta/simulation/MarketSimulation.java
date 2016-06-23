@@ -27,30 +27,32 @@ public class MarketSimulation extends Simulation {
             }
             this.actors.add(new Actor(pos, i));
         }
-        // actorの価値を計算(初期値)
+    }
+
+    @Override
+    public void init() {
+        // Provider全員の価格を初期化
         this.actors.stream().parallel()
                 .filter(Actor::isProvider)
-                .forEach(provider -> this.updatePrice(provider, MIN_PRICE));
+                .forEach(provider -> this.updatePrice(provider, 0));
     }
 
     @Override
     public void step() {
-        // Provider全員の価格を更新
-        this.actors.stream().parallel()
-                .filter(Actor::isProvider)
-                .forEach(provider -> this.updatePrice(provider, provider.getBestPrice()));
         // 価格をMIN_PRICEからMAX_PRICEまで変更させるシミュレーション
         this.actors.stream()
                 .filter(Actor::isProvider)
                 .forEach(this::simulatePrice);
+        // Provider全員の価格を更新
+        this.actors.stream().parallel()
+                .filter(Actor::isProvider)
+                .forEach(provider -> this.updatePrice(provider, provider.getBestPrice()));
         AppletManager.setProviderId(-1);
         AppletManager.callRepaint();
     }
 
     @Override
     public boolean isSimulationFinish() {
-//        String input = JOptionPane.showInputDialog("next?");
-//        return input.equals("y");
         for (Actor provider : this.actors) {
             if (provider.isProvider() && provider.isChangePrice()) {
                 return true;
@@ -69,6 +71,7 @@ public class MarketSimulation extends Simulation {
         int price = MIN_PRICE;
         // 現在の価格を保存(価格シミュレーションの後、他のProviderのシミュレーションのために求めた価格からシミュレーション前の価格に戻す必要があるため)
         int currentPrice = provider.getBestPrice();
+        provider.resetPrice();
         provider.setChangePrice(true);
         // 売上が最大となる価格をシミュレーション
         while (price <= MAX_PRICE) {
@@ -84,7 +87,7 @@ public class MarketSimulation extends Simulation {
         }
         // 他のProviderのシミュレーションのために、価格を計算前の価格に戻す
         provider.setPrice(currentPrice);
-        if (provider.getBestPrice() == currentPrice) {
+        if (Math.abs(provider.getBestPrice() - currentPrice) <= PRICE_THRESHOLD) {
             provider.setChangePrice(false);
         }
     }
@@ -103,7 +106,7 @@ public class MarketSimulation extends Simulation {
         // Providerに対するConsumerの人数を計算
         provider.setnConsumer(this.countConsumer(provider));
         // Consumerの人数と価格から売上を計算
-        int payoff = provider.calcPayoff();
+        provider.calcPayoff();
     }
 
     /**
@@ -116,9 +119,9 @@ public class MarketSimulation extends Simulation {
         if (!provider.isProvider()) return -1;
         int id = provider.getId();
         long count = this.actors.stream().parallel()
+                .filter(actor -> !actor.isProvider())
                 .filter(actor -> actor.getSelectProviderId() == id)
                 .count();
-        count = (count > MAX_CONSUMERS) ? MAX_CONSUMERS : count;
         return (int) count;
     }
 
@@ -141,5 +144,12 @@ public class MarketSimulation extends Simulation {
 
     public List<Actor> getActors() {
         return this.actors;
+    }
+
+    public void test() {
+        this.actors.stream()
+                .filter(Actor::isProvider)
+                .forEach(actor -> System.out.println(this.countConsumer(actor)));
+        this.actors.stream().filter(actor -> !actor.isProvider()).forEach(actor -> System.out.println(actor.getMaxValue()));
     }
 }

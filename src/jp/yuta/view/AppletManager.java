@@ -15,7 +15,7 @@ import static jp.yuta.util.Config.*;
  */
 public class AppletManager {
 
-    private static ActorApplet applet;
+    public static ActorApplet applet;
     private static InfoApplet infoApplet;
 
     private AppletManager() {

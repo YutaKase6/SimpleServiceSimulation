@@ -1,7 +1,6 @@
 package jp.yuta.model;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 
 import static jp.yuta.util.Config.*;
@@ -58,8 +57,12 @@ public class Actor {
      */
     public void updateSelectProvider() {
         // 最も価値を得られるProviderと同じ色に設定
-        this.status.setSelectProviderId(getMaxIndex(this.status.getValueList()));
-        this.color = colorList.get(this.status.getSelectProviderId());
+        this.status.setSelectProviderId(getMaxValueIndex(this.status.getValueList()));
+        if (this.status.getSelectProviderId() == -1) {
+            this.color = Color.lightGray;
+        } else {
+            this.color = colorList.get(this.status.getSelectProviderId());
+        }
     }
 
     /**
@@ -75,7 +78,6 @@ public class Actor {
         return operantResource + score - price - dist * this.moveCost;
     }
 
-
     /**
      * 売上を計算、最高売上であれば価格を保存
      *
@@ -83,6 +85,39 @@ public class Actor {
      */
     public int calcPayoff() {
         return this.status.calcPayoff();
+    }
+
+    public void resetPrice() {
+        this.status.resetPrice();
+    }
+
+    /**
+     * 引数のリストの中から最大値のインデックスを返す
+     *
+     * @param list リスト
+     * @return 最大値のインデックス
+     */
+    private static int getMaxValueIndex(List<Double> list) {
+        double max = 0;
+        int maxIndex = -1;
+        for (int i = 0; i < list.size(); i++) {
+            double n = list.get(i);
+            if (max < n) {
+                max = n;
+                maxIndex = i;
+            }
+        }
+        return maxIndex;
+    }
+
+    // test
+    public double getMaxValue() {
+        int id = getMaxValueIndex(this.status.getValueList());
+        if (id == -1) {
+            return 0;
+        } else {
+            return this.status.getValueList().get(id);
+        }
     }
 
     public int getId() {

@@ -101,23 +101,4 @@ public final class CalcUtil {
         }
         return distVector;
     }
-
-    /**
-     * 引数のリストの中から最大値のインデックスを返す
-     *
-     * @param list リスト
-     * @return 最大値のインデックス
-     */
-    public static int getMaxIndex(List<Double> list) {
-        double max = Double.NEGATIVE_INFINITY;
-        int maxIndex = -1;
-        for (int i = 0; i < list.size(); i++) {
-            double n = list.get(i);
-            if (max < n) {
-                max = n;
-                maxIndex = i;
-            }
-        }
-        return maxIndex;
-    }
 }
