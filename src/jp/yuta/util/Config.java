@@ -5,14 +5,16 @@ package jp.yuta.util;
  * Created by yutakase on 2016/06/02.
  */
 public final class Config {
-    private Config(){}
+    private Config() {
+    }
 
     public static final int RANDOM_SEED = 19920625;
 
     public static final int N_SERVICE = 1;
+    public static final int N_STEP = 100;
     public static final int DIM = 2;
     public static final int N_ACTOR = 2010;
-    public static final int N_Provider = 10;
+    public static final int N_PROVIDER = 10;
 
     public static final int MIN_OPERANT_RESOURCE = 1000;
     public static final int MAX_OPERANT_RESOURCE = 6000;
@@ -25,6 +27,8 @@ public final class Config {
     public static final int DELTA_PRICE = 100;
     public static final int PRICE_THRESHOLD = 100;
     public static final int MAX_CONSUMERS = 200;
+
+    public static final double RECALC_SCORE_PROBABILITY = 0.1;
 
     public static final int STEP_SLEEP_TIME = 0;
 

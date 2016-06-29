@@ -3,26 +3,18 @@ package jp.yuta.view;
 import jp.yuta.model.Actor;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
 
 import static jp.yuta.util.Config.*;
 
 /**
  * Created by yutakase on 2016/06/02.
  */
-public class ActorApplet extends AbstractApplet implements MouseListener {
-
-    @Override
-    public void init() {
-        super.init();
-        addMouseListener(this);
-    }
+public class ActorApplet extends AbstractApplet {
 
     @Override
     public void draw(Graphics2D buffer) {
         // ProviderはListの先頭にいるため、Providerを最後に描画するために逆順に描画、この方が見やすいってだけ。
+        // TODO: 2016/06/24 Providerの位置が先頭とは限らなくなるから、明示的にProviderの描画を最後にする必要あり。関係ない顧客->関係ある顧客->提供者の順番がいいかな
         int[] pos;
         for (int i = this.actors.size() - 1; i > -1; i--) {
             Actor actor = this.actors.get(i);
@@ -37,9 +29,10 @@ public class ActorApplet extends AbstractApplet implements MouseListener {
                 buffer.fillOval(pos[0] * CANVAS_RATE - size / 2, pos[1] * CANVAS_RATE - size / 2, size, size);
             }
         }
+        // 現在のシミュレーションに関わっているアクターを再描画、この方が見やすいってだけ
         for (int i = this.actors.size() - 1; i > -1; i--) {
             Actor actor = this.actors.get(i);
-            if(!actor.isProvider() && actor.getSelectProviderId() != this.nowProviderId) continue;
+            if (!actor.isProvider() && actor.getSelectProviderId() != this.nowProviderId) continue;
             pos = actor.getPos();
             buffer.setColor(actor.getColor());
             if (actor.isProvider()) {
@@ -51,7 +44,6 @@ public class ActorApplet extends AbstractApplet implements MouseListener {
                 buffer.fillOval(pos[0] * CANVAS_RATE - size / 2, pos[1] * CANVAS_RATE - size / 2, size, size);
             }
         }
-
     }
 
     /**
@@ -62,48 +54,5 @@ public class ActorApplet extends AbstractApplet implements MouseListener {
         g.fillRect(x * CANVAS_RATE - size / 2, y * CANVAS_RATE - size / 2, size, size);
         g.setColor(color);
         g.fillRect(x * CANVAS_RATE - size / 4, y * CANVAS_RATE - size / 4, size / 2, size / 2);
-    }
-
-    // test
-    public void hoge(int id){
-        this.nowProviderId = id;
-        repaint();
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        System.out.println("hoge");
-        Point p = e.getPoint();
-        System.out.println(p.getX() + "," + p.getY());
-        this.actors.stream().parallel().filter(Actor::isProvider).forEach(actor -> {
-            if (this.isOverlapProvider(actor.getPos(), p)) {
-                nowProviderId = actor.getId();
-                repaint();
-            }
-        });
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
-    }
-
-    private boolean isOverlapProvider(int[] pos, Point p) {
-        return p.getX() > pos[0] - CANVAS_RATE && p.getX() < pos[0] + CANVAS_RATE && p.getY() > pos[1] - CANVAS_RATE && p.getY() < pos[1] + CANVAS_RATE;
     }
 }

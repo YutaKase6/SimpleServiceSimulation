@@ -26,12 +26,12 @@ public class AppletManager {
         infoApplet.repaint();
     }
 
-    public static void setActors(List<Actor> actors){
+    public static void setActors(List<Actor> actors) {
         applet.setActors(actors);
         infoApplet.setActors(actors);
     }
 
-    public static void setProviderId(int providerId){
+    public static void setNowProviderId(int providerId) {
         applet.setNowProviderId(providerId);
         infoApplet.setNowProviderId(providerId);
     }

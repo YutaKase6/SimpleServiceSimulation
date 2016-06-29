@@ -1,6 +1,6 @@
 package jp.yuta;
 
-import jp.yuta.simulation.MarketSimulation;
+import jp.yuta.simulation.ExchangeSimulation;
 import jp.yuta.view.AppletManager;
 
 import java.util.ArrayList;
@@ -11,10 +11,7 @@ import java.util.List;
  */
 public class Main {
 
-    private static int N_TEST = 1;
-
-    private static MarketSimulation marketSimulation;
-    private static List<Integer> countList = new ArrayList<>(N_TEST);
+    private static ExchangeSimulation exchangeSimulation;
 
     public static void main(String[] args) {
         // Applet初期設定
@@ -23,25 +20,20 @@ public class Main {
 //        test();
     }
 
-    private static void simulation(){
-        marketSimulation = new MarketSimulation();
-        AppletManager.setActors(marketSimulation.getActors());
-        for(int i = 0; i < 1;i++){
-            marketSimulation.mainLoop();
-            // exchange
-            // recalc score
-        }
-        marketSimulation.test();
+    // simulation呼び出し
+    private static void simulation() {
+        exchangeSimulation = new ExchangeSimulation();
+        exchangeSimulation.mainLoop();
+        exchangeSimulation.test();
     }
 
-    private static void test(){
+    private static void test() {
+        final int N_TEST = 1;
+        List<Integer> countList = new ArrayList<>(N_TEST);
         for (int i = 0; i < N_TEST; i++) {
-            marketSimulation = new MarketSimulation();
-            AppletManager.setActors(marketSimulation.getActors());
-            // simulation start
-            marketSimulation.mainLoop();
-            countList.add(marketSimulation.getStepCount());
-            System.out.println(i + ":" + marketSimulation.getStepCount());
+            simulation();
+            countList.add(exchangeSimulation.getStepCount());
+            System.out.println(i + ":" + exchangeSimulation.getStepCount());
         }
 
         int sum = countList.stream().mapToInt(Integer::intValue).sum();

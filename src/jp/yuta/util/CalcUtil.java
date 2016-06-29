@@ -1,6 +1,5 @@
 package jp.yuta.util;
 
-import java.util.List;
 import java.util.Random;
 
 import static jp.yuta.util.Config.*;
@@ -15,7 +14,6 @@ public final class CalcUtil {
     private static Random randomGenerator;
 
     private CalcUtil() {
-
     }
 
     /**

@@ -1,7 +1,6 @@
 package jp.yuta.model;
 
 import java.awt.*;
-import java.util.List;
 
 import static jp.yuta.util.Config.*;
 import static jp.yuta.util.CalcUtil.*;
@@ -15,21 +14,22 @@ public class Actor {
     private int id;
     // 座標
     private int[] pos;
-
-    private Status status;
-
+    // 評価や能力といったサービスに関する情報
+    private ServiceStatus serviceStatus;
     // 移動する際、単位距離あたりどれだけコストがかかるか
     private double moveCost;
     // 色
     private Color color;
 
+
     public Actor(int[] pos, int id) {
         this.id = id;
         this.pos = pos;
         // 若いIDのActorが提供者
-        boolean isProvider = this.id < N_Provider;
-        this.status = new Status(isProvider);
-        // 移動コスト
+        boolean isProvider = this.id < N_PROVIDER;
+        // ProviderかConsumerか判定し、関する情報を生成
+        this.serviceStatus = new ServiceStatus(isProvider);
+        // 移動コストを乱数で決定
         this.moveCost = generateRandomGaussian(MOVE_COST_MU, MOVE_COST_SD);
         // 色を決定
         this.color = colorList.get(this.id % colorList.size());
@@ -42,40 +42,20 @@ public class Actor {
      */
     public void updateValue(Actor provider) {
         // 距離や評価から、得られる価値のリストを更新
-        double operantResource, score, price, dist;
-
-        operantResource = provider.getOperantResource();
-        score = this.status.getScoreList().get(provider.getId());
-        price = provider.getPrice();
-        dist = calcDist(this.pos, provider.getPos());
-
-        this.status.getValueList().set(provider.getId(), this.calcValue(operantResource, score, price, dist));
+        double dist = calcDist(this.pos, provider.getPos());
+        double moveCost = this.moveCost;
+        this.serviceStatus.updateValue(provider, dist, moveCost);
     }
 
     /**
      * 最も価値の得られるProviderを再選択
      */
     public void updateSelectProvider() {
-        // 最も価値を得られるProviderと同じ色に設定
-        this.status.setSelectProviderId(getMaxValueIndex(this.status.getValueList()));
-        if (this.status.getSelectProviderId() == -1) {
-            this.color = Color.lightGray;
-        } else {
-            this.color = colorList.get(this.status.getSelectProviderId());
-        }
-    }
-
-    /**
-     * 価値を計算
-     *
-     * @param operantResource Providerの能力
-     * @param score           Providerへの評価
-     * @param price           サービスの価格
-     * @param dist            距離
-     * @return 価値
-     */
-    private double calcValue(double operantResource, double score, double price, double dist) {
-        return operantResource + score - price - dist * this.moveCost;
+        // Providerを選択
+        this.serviceStatus.updateSelectProvider();
+        // 最も価値を得られるProviderと同じ色に設定(価値がすべてマイナスの場合はグレーに)
+        int selectedId = this.serviceStatus.getSelectProviderId();
+        this.color = (selectedId == -1) ? Color.lightGray : colorList.get(selectedId);
     }
 
     /**
@@ -84,40 +64,30 @@ public class Actor {
      * @return 売上
      */
     public int calcPayoff() {
-        return this.status.calcPayoff();
-    }
-
-    public void resetPrice() {
-        this.status.resetPrice();
+        return this.serviceStatus.calcPayoff();
     }
 
     /**
-     * 引数のリストの中から最大値のインデックスを返す
-     *
-     * @param list リスト
-     * @return 最大値のインデックス
+     * 最大売上、最大売上価格、最大売上顧客数をリセット
      */
-    private static int getMaxValueIndex(List<Double> list) {
-        double max = 0;
-        int maxIndex = -1;
-        for (int i = 0; i < list.size(); i++) {
-            double n = list.get(i);
-            if (max < n) {
-                max = n;
-                maxIndex = i;
-            }
-        }
-        return maxIndex;
+    public void resetBest() {
+        this.serviceStatus.resetBest();
     }
 
-    // test
-    public double getMaxValue() {
-        int id = getMaxValueIndex(this.status.getValueList());
-        if (id == -1) {
-            return 0;
-        } else {
-            return this.status.getValueList().get(id);
-        }
+    /**
+     * 能力上昇
+     *
+     * @param nConsumers 顧客数
+     */
+    public void increseOperantResource(int nConsumers) {
+        this.serviceStatus.increseOperantResouce(nConsumers);
+    }
+
+    /**
+     * 評価再計算
+     */
+    public void reCalcScore() {
+        this.serviceStatus.reCalcScoreList();
     }
 
     public int getId() {
@@ -133,46 +103,39 @@ public class Actor {
     }
 
     public boolean isProvider() {
-        return this.status.isProvider();
+        return this.serviceStatus.isProvider();
     }
 
     public double getOperantResource() {
-        return this.status.getOperantResource();
+        return this.serviceStatus.getOperantResource();
     }
 
     public void setPrice(int price) {
-        this.status.setPrice(price);
+        this.serviceStatus.setPrice(price);
     }
 
     public int getPrice() {
-        return this.status.getPrice();
+        return this.serviceStatus.getPrice();
     }
 
     public int getSelectProviderId() {
-        return this.status.getSelectProviderId();
+        return this.serviceStatus.getSelectProviderId();
     }
 
     public void setnConsumer(int nConsumer) {
-        this.status.setnConsumer(nConsumer);
+        this.serviceStatus.setnConsumer(nConsumer);
     }
 
     public int getBestPrice() {
-        return this.status.getBestPrice();
+        return this.serviceStatus.getBestPrice();
     }
 
     public int getBestPayoff() {
-        return this.status.getBestPayoff();
+        return this.serviceStatus.getBestPayoff();
     }
 
     public int getBestNConsumer() {
-        return this.status.getBestNConsumer();
+        return this.serviceStatus.getBestNConsumer();
     }
 
-    public void setChangePrice(boolean changePrice) {
-        this.status.setChangePrice(changePrice);
-    }
-
-    public boolean isChangePrice() {
-        return this.status.isChangePrice();
-    }
 }
