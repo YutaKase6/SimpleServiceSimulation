@@ -11,7 +11,7 @@ public final class Config {
     public static final int RANDOM_SEED = 19920625;
 
     public static final int N_SERVICE = 1;
-    public static final int N_STEP = 100;
+    public static final int N_STEP = 30;
     public static final int DIM = 2;
     public static final int N_ACTOR = 2010;
     public static final int N_PROVIDER = 10;
@@ -25,6 +25,7 @@ public final class Config {
     public static final int MIN_PRICE = 0;
     public static final int MAX_PRICE = 10000;
     public static final int DELTA_PRICE = 100;
+    public static final int MAX_MARKET_SIMULATION_STEP = 50;
     public static final int PRICE_THRESHOLD = 100;
     public static final int MAX_CONSUMERS = 200;
 

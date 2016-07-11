@@ -5,7 +5,7 @@ package jp.yuta.simulation;
  */
 public abstract class Simulation {
 
-    private int stepCount = 0;
+    protected int stepCount = 0;
 
     public void mainLoop() {
         stepCount = 0;

@@ -86,8 +86,8 @@ public class Actor {
     /**
      * 評価再計算
      */
-    public void reCalcScore() {
-        this.serviceStatus.reCalcScoreList();
+    public void updateScore() {
+        this.serviceStatus.updateScoreList();
     }
 
     public int getId() {

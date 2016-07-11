@@ -55,7 +55,10 @@ public class ServiceStatus {
     private void initConsumer() {
         // 各Providerへの評価(能力に対する相対評価)
         for (int i = 0; i < N_PROVIDER; i++) {
-            this.scoreList.add(generateRandomGaussian(SCORE_MU, SCORE_SD));
+            // 評価の初期値は0? 知らないもんは知らない。
+//            this.scoreList.add(generateRandomGaussian(SCORE_MU, SCORE_SD));
+            this.scoreList.add(0.0);
+
             this.valueList.add(0.0);
         }
     }
@@ -151,15 +154,32 @@ public class ServiceStatus {
     public void increseOperantResouce(int nConsumer) {
         nConsumer = (nConsumer > MAX_CONSUMERS) ? MAX_CONSUMERS : nConsumer;
         this.operantResource += nConsumer;
+        // 能力上限
+        this.operantResource = (this.operantResource > MAX_OPERANT_RESOURCE) ? MAX_OPERANT_RESOURCE : this.operantResource;
     }
 
     /**
      * 価値再計算
      */
-    public void reCalcScoreList() {
-        for (int i = 0; i < scoreList.size(); i++) {
-            if (generateRandomDouble(0, 1) < RECALC_SCORE_PROBABILITY) {
-                scoreList.set(i, generateRandomGaussian(SCORE_MU, SCORE_SD));
+    public void updateScoreList() {
+//        for (int i = 0; i < this.scoreList.size(); i++) {
+//            if (generateRandomDouble(0, 1) < RECALC_SCORE_PROBABILITY) {
+//                this.scoreList.set(i, generateRandomGaussian(SCORE_MU, SCORE_SD));
+//            }
+//        }
+        // 交換したProviderを評価
+        if (this.selectProviderId != -1) {
+            if (this.scoreList.get(this.selectProviderId) == 0) {
+                // 初めて, 1000 or -1000 で評価
+                double score = (generateRandomDouble(0, 1) > 0.5) ? 1000.0 : -1000.0;
+                this.scoreList.set(this.selectProviderId, score);
+            }else {
+                // リピート、一定確率で評価を上下
+                if(generateRandomDouble(0,1) < RECALC_SCORE_PROBABILITY) {
+                    double deltaScore = (generateRandomDouble(0, 1) > 0.5) ? 100.0 : -100.0;
+                    double score = this.scoreList.get(this.selectProviderId);
+                    this.scoreList.set(this.selectProviderId, score + deltaScore);
+                }
             }
         }
     }

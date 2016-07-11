@@ -61,6 +61,7 @@ public class MarketSimulation extends Simulation {
 
     @Override
     public boolean isSimulationFinish() {
+        if (this.stepCount >= MAX_MARKET_SIMULATION_STEP) return false;
         // Mapの全要素を走査、すべての要素がfalseだったらシミュレーションを終了する
         for (Map.Entry<Integer, Boolean> entry : this.isPriceChangedMap.entrySet()) {
             if (entry.getValue()) {
@@ -161,7 +162,7 @@ public class MarketSimulation extends Simulation {
     public void updateScore() {
         this.actors.stream().parallel()
                 .filter(actor -> !actor.isProvider())
-                .forEach(Actor::reCalcScore);
+                .forEach(Actor::updateScore);
     }
 
     public List<Actor> getActors() {
