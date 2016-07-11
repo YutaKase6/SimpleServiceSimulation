@@ -1,10 +1,11 @@
 package jp.yuta.model;
 
 import java.awt.*;
+import java.util.*;
+import java.util.List;
 
 import static jp.yuta.util.Config.*;
 import static jp.yuta.util.CalcUtil.*;
-import static jp.yuta.util.MyColor.colorList;
 
 /**
  * Created by yutakase on 2016/06/02.
@@ -15,11 +16,8 @@ public class Actor {
     // 座標
     private int[] pos;
     // 評価や能力といったサービスに関する情報
-    private ServiceStatus serviceStatus;
-    // 移動する際、単位距離あたりどれだけコストがかかるか
-    private double moveCost;
-    // 色
-    private Color color;
+//    private ServiceStatus serviceStatus;
+    private List<ServiceStatus> serviceStatusList = new ArrayList<>(N_SERVICE);
 
 
     public Actor(int[] pos, int id) {
@@ -28,11 +26,13 @@ public class Actor {
         // 若いIDのActorが提供者
         boolean isProvider = this.id < N_PROVIDER;
         // ProviderかConsumerか判定し、関する情報を生成
-        this.serviceStatus = new ServiceStatus(isProvider);
-        // 移動コストを乱数で決定
-        this.moveCost = generateRandomGaussian(MOVE_COST_MU, MOVE_COST_SD);
+//        this.serviceStatus = new ServiceStatus(isProvider);
+        for (int serviceId = 0; serviceId < N_SERVICE; serviceId++) {
+            isProvider = (this.id / N_PROVIDER == serviceId);
+            this.serviceStatusList.add(new ServiceStatus(this.id, serviceId, isProvider));
+        }
         // 色を決定
-        this.color = colorList.get(this.id % colorList.size());
+//        this.color = colorList.get(this.id % colorList.size());
     }
 
     /**
@@ -40,22 +40,23 @@ public class Actor {
      *
      * @param provider 再計算する対象のProvider
      */
-    public void updateValue(Actor provider) {
+    public void updateValue(Actor provider, int serviceId) {
         // 距離や評価から、得られる価値のリストを更新
         double dist = calcDist(this.pos, provider.getPos());
-        double moveCost = this.moveCost;
-        this.serviceStatus.updateValue(provider, dist, moveCost);
+//        this.serviceStatus.updateValue(provider, dist);
+        this.serviceStatusList.get(serviceId).updateValue(provider, dist);
     }
 
     /**
      * 最も価値の得られるProviderを再選択
      */
-    public void updateSelectProvider() {
+    public void updateSelectProvider(int serviceId) {
         // Providerを選択
-        this.serviceStatus.updateSelectProvider();
+//        this.serviceStatus.updateSelectProvider();
+        this.serviceStatusList.get(serviceId).updateSelectProvider();
         // 最も価値を得られるProviderと同じ色に設定(価値がすべてマイナスの場合はグレーに)
-        int selectedId = this.serviceStatus.getSelectProviderId();
-        this.color = (selectedId == -1) ? Color.lightGray : colorList.get(selectedId);
+//        int selectedId = this.serviceStatus.getSelectProviderId();
+//        this.color = (selectedId == -1) ? Color.lightGray : colorList.get(selectedId);
     }
 
     /**
@@ -63,15 +64,15 @@ public class Actor {
      *
      * @return 売上
      */
-    public int calcPayoff() {
-        return this.serviceStatus.calcPayoff();
+    public int calcPayoff(int serviceId) {
+        return this.serviceStatusList.get(serviceId).calcPayoff();
     }
 
     /**
      * 最大売上、最大売上価格、最大売上顧客数をリセット
      */
-    public void resetBest() {
-        this.serviceStatus.resetBest();
+    public void resetBest(int serviceId) {
+        this.serviceStatusList.get(serviceId).resetBest();
     }
 
     /**
@@ -79,63 +80,63 @@ public class Actor {
      *
      * @param nConsumers 顧客数
      */
-    public void increseOperantResource(int nConsumers) {
-        this.serviceStatus.increseOperantResouce(nConsumers);
+    public void increseOperantResource(int nConsumers, int serviceId) {
+        this.serviceStatusList.get(serviceId).increseOperantResouce(nConsumers);
     }
 
     /**
      * 評価再計算
      */
-    public void updateScore() {
-        this.serviceStatus.updateScoreList();
+    public void updateScore(int serviceId) {
+        this.serviceStatusList.get(serviceId).updateScoreList();
     }
 
     public int getId() {
         return this.id;
     }
 
-    public Color getColor() {
-        return this.color;
+    public Color getColor(int serviceId) {
+        return this.serviceStatusList.get(serviceId).getColor();
     }
 
     public int[] getPos() {
         return this.pos;
     }
 
-    public boolean isProvider() {
-        return this.serviceStatus.isProvider();
+    public boolean isProvider(int serviceId) {
+        return this.serviceStatusList.get(serviceId).isProvider();
     }
 
-    public double getOperantResource() {
-        return this.serviceStatus.getOperantResource();
+    public double getOperantResource(int serviceId) {
+        return this.serviceStatusList.get(serviceId).getOperantResource();
     }
 
-    public void setPrice(int price) {
-        this.serviceStatus.setPrice(price);
+    public void setPrice(int price, int serviceId) {
+        this.serviceStatusList.get(serviceId).setPrice(price);
     }
 
-    public int getPrice() {
-        return this.serviceStatus.getPrice();
+    public int getPrice(int serviceId) {
+        return this.serviceStatusList.get(serviceId).getPrice();
     }
 
-    public int getSelectProviderId() {
-        return this.serviceStatus.getSelectProviderId();
+    public int getSelectProviderId(int serviceId) {
+        return this.serviceStatusList.get(serviceId).getSelectProviderId();
     }
 
-    public void setnConsumer(int nConsumer) {
-        this.serviceStatus.setnConsumer(nConsumer);
+    public void setnConsumer(int nConsumer, int serviceId) {
+        this.serviceStatusList.get(serviceId).setnConsumer(nConsumer);
     }
 
-    public int getBestPrice() {
-        return this.serviceStatus.getBestPrice();
+    public int getBestPrice(int serviceId) {
+        return this.serviceStatusList.get(serviceId).getBestPrice();
     }
 
-    public int getBestPayoff() {
-        return this.serviceStatus.getBestPayoff();
+    public int getBestPayoff(int serviceId) {
+        return this.serviceStatusList.get(serviceId).getBestPayoff();
     }
 
-    public int getBestNConsumer() {
-        return this.serviceStatus.getBestNConsumer();
+    public int getBestNConsumer(int serviceId) {
+        return this.serviceStatusList.get(serviceId).getBestNConsumer();
     }
 
 }

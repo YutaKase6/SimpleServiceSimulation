@@ -1,18 +1,23 @@
 package jp.yuta.model;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import static jp.yuta.util.CalcUtil.*;
 import static jp.yuta.util.Config.*;
+import static jp.yuta.util.MyColor.colorList;
 
 /**
  * Created by yutakase on 2016/06/16.
- * todo : 能力はConsumerにも付ける、評価に影響させる
  */
 public class ServiceStatus {
 
+    private int serviceId;
+
     private boolean isProvider;
+    // 色
+    private Color color;
 
     // 能力
     private double operantResource;
@@ -33,10 +38,14 @@ public class ServiceStatus {
     private List<Double> valueList = new ArrayList<>(N_PROVIDER);
     // 価値最大となるProviderのID
     private int selectProviderId;
+    // 移動する際、単位距離あたりどれだけコストがかかるか
+    private double moveCost;
 
 
-    public ServiceStatus(boolean isProvider) {
+    public ServiceStatus(int actorId, int serviceId, boolean isProvider) {
+        this.serviceId = serviceId;
         this.isProvider = isProvider;
+        this.color = colorList.get(actorId % colorList.size());
         if (this.isProvider) {
             this.initProvider();
         } else {
@@ -53,12 +62,13 @@ public class ServiceStatus {
     }
 
     private void initConsumer() {
+        // 移動コストを乱数で決定
+        this.moveCost = generateRandomGaussian(MOVE_COST_MU, MOVE_COST_SD);
         // 各Providerへの評価(能力に対する相対評価)
         for (int i = 0; i < N_PROVIDER; i++) {
             // 評価の初期値は0? 知らないもんは知らない。
 //            this.scoreList.add(generateRandomGaussian(SCORE_MU, SCORE_SD));
             this.scoreList.add(0.0);
-
             this.valueList.add(0.0);
         }
     }
@@ -88,10 +98,9 @@ public class ServiceStatus {
      *
      * @param provider 再計算する対象のProvider
      * @param dist     Providerとの距離
-     * @param moveCost 移動コスト
      */
-    public void updateValue(Actor provider, double dist, double moveCost) {
-        double value = this.calcValue(provider, dist, moveCost);
+    public void updateValue(Actor provider, double dist) {
+        double value = this.calcValue(provider, dist);
         this.valueList.set(provider.getId(), value);
     }
 
@@ -100,15 +109,14 @@ public class ServiceStatus {
      *
      * @param provider 価値計算対象Provider
      * @param dist     Providerとの距離
-     * @param moveCost 移動コスト
      * @return 価値
      */
-    private double calcValue(Actor provider, double dist, double moveCost) {
-        double operantResource = provider.getOperantResource();
+    private double calcValue(Actor provider, double dist) {
+        double operantResource = provider.getOperantResource(this.serviceId);
         double score = this.scoreList.get(provider.getId());
-        double price = provider.getPrice();
+        double price = provider.getPrice(this.serviceId);
 
-        return operantResource + score - price - dist * moveCost;
+        return operantResource + score - price - (dist * this.moveCost);
     }
 
     /**
@@ -116,6 +124,7 @@ public class ServiceStatus {
      */
     public void updateSelectProvider() {
         this.selectProviderId = getMaxValueIndex(this.valueList);
+        this.color = (this.selectProviderId == -1) ? Color.lightGray : colorList.get(this.selectProviderId);
     }
 
     /**
@@ -162,6 +171,7 @@ public class ServiceStatus {
      * 価値再計算
      */
     public void updateScoreList() {
+//        ランダムに再評価
 //        for (int i = 0; i < this.scoreList.size(); i++) {
 //            if (generateRandomDouble(0, 1) < RECALC_SCORE_PROBABILITY) {
 //                this.scoreList.set(i, generateRandomGaussian(SCORE_MU, SCORE_SD));
@@ -173,15 +183,19 @@ public class ServiceStatus {
                 // 初めて, 1000 or -1000 で評価
                 double score = (generateRandomDouble(0, 1) > 0.5) ? 1000.0 : -1000.0;
                 this.scoreList.set(this.selectProviderId, score);
-            }else {
+            } else {
                 // リピート、一定確率で評価を上下
-                if(generateRandomDouble(0,1) < RECALC_SCORE_PROBABILITY) {
+                if (generateRandomDouble(0, 1) < RECALC_SCORE_PROBABILITY) {
                     double deltaScore = (generateRandomDouble(0, 1) > 0.5) ? 100.0 : -100.0;
                     double score = this.scoreList.get(this.selectProviderId);
                     this.scoreList.set(this.selectProviderId, score + deltaScore);
                 }
             }
         }
+    }
+
+    public Color getColor() {
+        return this.color;
     }
 
     public boolean isProvider() {
