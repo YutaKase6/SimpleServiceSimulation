@@ -3,37 +3,28 @@ package jp.yuta.simulation;
 import jp.yuta.model.Actor;
 import jp.yuta.view.AppletManager;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static jp.yuta.util.CalcUtil.generateRandomDouble;
 import static jp.yuta.util.Config.*;
 
 /**
  * Created by yutakase on 2016/06/04.
  */
 public class MarketSimulation extends Simulation {
-
+    private int serviceId;
     // Actorのリスト
-    private List<Actor> actors = new ArrayList<>(N_ACTOR);
+    private List<Actor> actors;
     // 各Providerの価格がシミュレーション前後で変化したかどうかのフラグのマップ(Key:ProviderのID)、シミュレーションの終了判定に用いる
     private Map<Integer, Boolean> isPriceChangedMap = new HashMap<>(N_PROVIDER);
 
-    public MarketSimulation() {
-        // Actorのリストを生成
-        int[] pos;
-        for (int i = 0; i < N_ACTOR; i++) {
-            pos = new int[DIM];
-            for (int j = 0; j < DIM; j++) {
-                pos[j] = (int) generateRandomDouble(0, FIELD_SIZE);
-            }
-            this.actors.add(new Actor(pos, i));
-        }
+    public MarketSimulation(int serviceId, List<Actor> actors) {
+        this.serviceId = serviceId;
+        this.actors = actors;
         // Provider全員の価格を初期化
         this.actors.stream().parallel()
-                .filter(Actor::isProvider)
+                .filter(actor -> actor.isProvider(this.serviceId))
                 .forEach(actor -> this.updatePrice(actor, 0));
     }
 
@@ -41,7 +32,7 @@ public class MarketSimulation extends Simulation {
     public void init() {
         // シミュレーションによる価格変化フラグのマップを初期化
         this.actors.stream().parallel()
-                .filter(Actor::isProvider)
+                .filter(actor -> actor.isProvider(this.serviceId))
                 .forEach(actor -> this.isPriceChangedMap.put(actor.getId(), true));
     }
 
@@ -49,12 +40,12 @@ public class MarketSimulation extends Simulation {
     public void step() {
         // 価格をMIN_PRICEからMAX_PRICEまで変更させるシミュレーション
         this.actors.stream()
-                .filter(Actor::isProvider)
+                .filter(actor -> actor.isProvider(this.serviceId))
                 .forEach(this::simulatePrice);
         // Provider全員の価格を更新
         this.actors.stream().parallel()
-                .filter(Actor::isProvider)
-                .forEach(provider -> this.updatePrice(provider, provider.getBestPrice()));
+                .filter(actor -> actor.isProvider(this.serviceId))
+                .forEach(provider -> this.updatePrice(provider, provider.getBestPrice(this.serviceId)));
         AppletManager.setNowProviderId(-1);
         AppletManager.callRepaint();
     }
@@ -79,8 +70,8 @@ public class MarketSimulation extends Simulation {
     private void simulatePrice(Actor provider) {
         AppletManager.setNowProviderId(provider.getId());
         // 現在の価格を保存(価格シミュレーションの後、他のProviderのシミュレーションのために求めた価格からシミュレーション前の価格に戻す必要があるため)
-        int currentPrice = provider.getBestPrice();
-        provider.resetBest();
+        int currentPrice = provider.getBestPrice(this.serviceId);
+        provider.resetBest(this.serviceId);
         this.isPriceChangedMap.put(provider.getId(), true);
         // 売上が最大となる価格をシミュレーション
         int price = MIN_PRICE;
@@ -97,8 +88,8 @@ public class MarketSimulation extends Simulation {
         }
 
         // 他のProviderのシミュレーションのために、価格を計算前の価格に戻す
-        provider.setPrice(currentPrice);
-        if (Math.abs(provider.getBestPrice() - currentPrice) <= PRICE_THRESHOLD) {
+        provider.setPrice(currentPrice, this.serviceId);
+        if (Math.abs(provider.getBestPrice(this.serviceId) - currentPrice) <= PRICE_THRESHOLD) {
             this.isPriceChangedMap.put(provider.getId(), false);
         }
     }
@@ -111,13 +102,13 @@ public class MarketSimulation extends Simulation {
      */
     private void updatePrice(Actor provider, int newPrice) {
         // Providerの価格を変更
-        provider.setPrice(newPrice);
+        provider.setPrice(newPrice, this.serviceId);
         // Consumer全員の価値を再計算
         this.updateConsumersValues();
         // Providerに対するConsumerの人数を計算
-        provider.setnConsumer(this.countConsumer(provider));
+        provider.setnConsumer(this.countConsumer(provider), this.serviceId);
         // Consumerの人数と価格から売上を計算
-        provider.calcPayoff();
+        provider.calcPayoff(this.serviceId);
     }
 
     /**
@@ -126,15 +117,15 @@ public class MarketSimulation extends Simulation {
     private void updateConsumersValues() {
         // Consumer全員の各Providerに対する価値を再計算
         this.actors.stream().parallel()
-                .filter(Actor::isProvider)
+                .filter(actor -> actor.isProvider(this.serviceId))
                 .forEach(provider -> this.actors.stream().parallel()
-                        .filter(actor -> !actor.isProvider())
-                        .forEach(actor -> actor.updateValue(provider))
+                        .filter(actor -> !actor.isProvider(this.serviceId))
+                        .forEach(actor -> actor.updateValue(provider, this.serviceId))
                 );
         // 各Consumerが最も価値を得られるProviderを選択
         this.actors.stream().parallel()
-                .filter(actor -> !actor.isProvider())
-                .forEach(Actor::updateSelectProvider);
+                .filter(actor -> !actor.isProvider(this.serviceId))
+                .forEach(actor -> actor.updateSelectProvider(this.serviceId));
     }
 
     /**
@@ -144,25 +135,25 @@ public class MarketSimulation extends Simulation {
      * @return Consumerの人数
      */
     private int countConsumer(Actor provider) {
-        if (!provider.isProvider()) return -1;
+        if (!provider.isProvider(this.serviceId)) return -1;
         int id = provider.getId();
         long count = this.actors.stream().parallel()
-                .filter(actor -> !actor.isProvider())
-                .filter(actor -> actor.getSelectProviderId() == id)
+                .filter(actor -> !actor.isProvider(this.serviceId))
+                .filter(actor -> actor.getSelectProviderId(this.serviceId) == id)
                 .count();
         return (int) count;
     }
 
     public void updateOperandResource() {
         this.actors.stream().parallel()
-                .filter(Actor::isProvider)
-                .forEach(actor -> actor.increseOperantResource(this.countConsumer(actor)));
+                .filter(actor -> actor.isProvider(this.serviceId))
+                .forEach(actor -> actor.increseOperantResource(this.countConsumer(actor), this.serviceId));
     }
 
     public void updateScore() {
         this.actors.stream().parallel()
-                .filter(actor -> !actor.isProvider())
-                .forEach(Actor::updateScore);
+                .filter(actor -> !actor.isProvider(this.serviceId))
+                .forEach(actor -> actor.updateScore(this.serviceId));
     }
 
     public List<Actor> getActors() {
@@ -172,11 +163,11 @@ public class MarketSimulation extends Simulation {
     // debug用
     public void test() {
         this.actors.stream()
-                .filter(Actor::isProvider)
+                .filter(actor -> actor.isProvider(this.serviceId))
                 .forEach(actor -> System.out.println(this.countConsumer(actor)));
         long count = this.actors.stream().parallel()
-                .filter(actor -> !actor.isProvider())
-                .filter(actor -> actor.getSelectProviderId() == -1)
+                .filter(actor -> !actor.isProvider(this.serviceId))
+                .filter(actor -> actor.getSelectProviderId(this.serviceId) == -1)
                 .count();
         System.out.println("No exchange Actors :" + count);
     }

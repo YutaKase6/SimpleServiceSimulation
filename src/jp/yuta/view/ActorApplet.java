@@ -11,38 +11,30 @@ import static jp.yuta.util.Config.*;
  */
 public class ActorApplet extends AbstractApplet {
 
+
     @Override
     public void draw(Graphics2D buffer) {
-        // ProviderはListの先頭にいるため、Providerを最後に描画するために逆順に描画、この方が見やすいってだけ。
-        // TODO: 2016/06/24 Providerの位置が先頭とは限らなくなるから、明示的にProviderの描画を最後にする必要あり。関係ない顧客->関係ある顧客->提供者の順番がいいかな
-        int[] pos;
-        for (int i = this.actors.size() - 1; i > -1; i--) {
-            Actor actor = this.actors.get(i);
-            pos = actor.getPos();
-            buffer.setColor(actor.getColor());
-            if (actor.isProvider()) {
-                // シミュレーション中のProviderを大きく表示
-                int size = i == nowProviderId ? CANVAS_RATE * 4 : CANVAS_RATE * 2;
-                drawProvider(buffer, pos[0], pos[1], size, actor.getColor());
-            } else {
-                int size = CANVAS_RATE * 2;
-                buffer.fillOval(pos[0] * CANVAS_RATE - size / 2, pos[1] * CANVAS_RATE - size / 2, size, size);
-            }
-        }
-        // 現在のシミュレーションに関わっているアクターを再描画、この方が見やすいってだけ
-        for (int i = this.actors.size() - 1; i > -1; i--) {
-            Actor actor = this.actors.get(i);
-            if (!actor.isProvider() && actor.getSelectProviderId() != this.nowProviderId) continue;
-            pos = actor.getPos();
-            buffer.setColor(actor.getColor());
-            if (actor.isProvider()) {
-                // シミュレーション中のProviderを大きく表示
-                int size = i == nowProviderId ? CANVAS_RATE * 4 : CANVAS_RATE * 2;
-                drawProvider(buffer, pos[0], pos[1], size, actor.getColor());
-            } else {
-                int size = CANVAS_RATE * 2;
-                buffer.fillOval(pos[0] * CANVAS_RATE - size / 2, pos[1] * CANVAS_RATE - size / 2, size, size);
-            }
+        // Actor描画。関係ない顧客->関係ある顧客->提供者の順番。見やすさ重視。
+        this.actors.stream().filter(actor -> !actor.isProvider(this.serviceId) && actor.getSelectProviderId(this.serviceId) != this.nowProviderId).forEach(actor -> this.drawActor(buffer, actor));
+        this.actors.stream().filter(actor -> !actor.isProvider(this.serviceId) && actor.getSelectProviderId(this.serviceId) == this.nowProviderId).forEach(actor -> this.drawActor(buffer, actor));
+        this.actors.stream().filter(actor -> actor.isProvider(this.serviceId)).forEach(actor -> this.drawActor(buffer, actor));
+    }
+
+    /**
+     * Actor描画
+     */
+    private void drawActor(Graphics2D buffer, Actor actor) {
+        int[] pos = actor.getPos();
+        buffer.setColor(actor.getColor(this.serviceId));
+        if (actor.isProvider(this.serviceId)) {
+            // Provider
+            // シミュレーション中のProviderを大きく表示
+            int size = (actor.getId() == this.nowProviderId) ? CANVAS_RATE * 4 : CANVAS_RATE * 2;
+            this.drawProvider(buffer, pos[0], pos[1], size, actor.getColor(this.serviceId));
+        } else {
+            // Consumer
+            int size = CANVAS_RATE * 2;
+            buffer.fillOval(pos[0] * CANVAS_RATE - size / 2, pos[1] * CANVAS_RATE - size / 2, size, size);
         }
     }
 

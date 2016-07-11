@@ -16,6 +16,8 @@ public abstract class AbstractApplet extends JApplet {
     public List<Actor> actors;
     public int nowProviderId = -1;
     private boolean isInit = false;
+    // 描画するサービスのインデックス
+    public int serviceId;
 
     @Override
     public void init() {
@@ -25,7 +27,7 @@ public abstract class AbstractApplet extends JApplet {
 
     @Override
     public void paint(Graphics g) {
-        if (!isInit) return;
+        if (!this.isInit) return;
         super.paint(g);
         Dimension d = getSize();
         Image back = createImage(d.width, d.height);
@@ -40,6 +42,10 @@ public abstract class AbstractApplet extends JApplet {
     public void setActors(List<Actor> actors) {
         this.actors = actors;
         this.isInit = true;
+    }
+
+    public void setServiceId(int serviceId) {
+        this.serviceId = serviceId;
     }
 
     public void setNowProviderId(int nowProviderId) {

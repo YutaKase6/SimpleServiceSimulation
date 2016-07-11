@@ -16,11 +16,11 @@ public class InfoApplet extends AbstractApplet {
     private static final int START_Y = 100;
     private static final int DELTA_Y = 20;
 
-    private static final int START_X = 50;
+    private static final int START_X = 20;
     private static final int RESOURCE_WIDTH = 150;
     private static final int PRICE_WIDTH = 50;
-    private static final int BEST_PRICE_WIDTH = 100;
-    private static final int BEST_PAYOFF_WIDTH = 100;
+    private static final int BEST_PRICE_WIDTH = 60;
+    private static final int BEST_PAYOFF_WIDTH = 75;
     private static final int BEST_N_CONSUMERS_WIDTH = 50;
 
     private static final String RESOURCE = "Resource";
@@ -38,13 +38,13 @@ public class InfoApplet extends AbstractApplet {
             buffer.setColor(Color.black);
             int y = START_Y + (i * DELTA_Y);
             // 描画
-            dataMap.put(RESOURCE, "" + actor.getOperantResource());
-            dataMap.put(PRICE, "" + actor.getPrice());
-            dataMap.put(BEST_PRICE, "" + actor.getBestPrice());
-            dataMap.put(BEST_PAYOFF, "" + actor.getBestPayoff());
-            dataMap.put(BEST_N_CONSUMER, "" + actor.getBestNConsumer());
+            dataMap.put(RESOURCE, "" + actor.getOperantResource(this.serviceId));
+            dataMap.put(PRICE, "" + actor.getPrice(this.serviceId));
+            dataMap.put(BEST_PRICE, "" + actor.getBestPrice(this.serviceId));
+            dataMap.put(BEST_PAYOFF, "" + actor.getBestPayoff(this.serviceId));
+            dataMap.put(BEST_N_CONSUMER, "" + actor.getBestNConsumer(this.serviceId));
             this.drawRow(buffer, dataMap, y);
-            this.drawRect(buffer, i == nowProviderId, y, actor.getColor());
+            this.drawRect(buffer, i == nowProviderId, y, actor.getColor(this.serviceId));
         }
 
         // 一行目

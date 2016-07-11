@@ -1,6 +1,9 @@
 package jp.yuta.simulation;
 
+import jp.yuta.model.Actor;
 import jp.yuta.view.AppletManager;
+
+import java.util.List;
 
 import static jp.yuta.util.Config.N_STEP;
 
@@ -12,8 +15,9 @@ public class ExchangeSimulation extends Simulation {
     private int step = 0;
     private MarketSimulation marketSimulation;
 
-    public ExchangeSimulation() {
-        this.marketSimulation = new MarketSimulation();
+    public ExchangeSimulation(List<Actor> actors) {
+        // TODO: 2016/07/12 serviceId
+        this.marketSimulation = new MarketSimulation(0, actors);
         AppletManager.setActors(this.marketSimulation.getActors());
     }
 
