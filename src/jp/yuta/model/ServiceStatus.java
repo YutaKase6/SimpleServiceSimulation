@@ -101,7 +101,7 @@ public class ServiceStatus {
      */
     public void updateValue(Actor provider, double dist) {
         double value = this.calcValue(provider, dist);
-        this.valueList.set(provider.getId(), value);
+        this.valueList.set(provider.getId() % N_PROVIDER, value);
     }
 
     /**
@@ -113,7 +113,7 @@ public class ServiceStatus {
      */
     private double calcValue(Actor provider, double dist) {
         double operantResource = provider.getOperantResource(this.serviceId);
-        double score = this.scoreList.get(provider.getId());
+        double score = this.scoreList.get(provider.getId() % N_PROVIDER);
         double price = provider.getPrice(this.serviceId);
 
         return operantResource + score - price - (dist * this.moveCost);

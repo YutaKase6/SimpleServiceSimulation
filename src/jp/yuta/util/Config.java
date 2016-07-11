@@ -8,9 +8,9 @@ public final class Config {
     private Config() {
     }
 
-    public static final int RANDOM_SEED = 19920625;
+    public static final int RANDOM_SEED = 625;
 
-    public static final int N_SERVICE = 1;
+    public static final int N_SERVICE = 2;
     public static final int N_STEP = 30;
     public static final int DIM = 2;
     public static final int N_ACTOR = 2010;
@@ -35,9 +35,9 @@ public final class Config {
     public static final int STEP_SLEEP_TIME = 50;
 
     public static final int N__CANVAS_ROW = 3;
-    public static final int N__CANVAS_COLUMN = 1;
+    public static final int N__CANVAS_COLUMN = 2;
     public static final int CANVAS_SIZE = 400;
-    public static final int FRAME_PADDING = 30;
+    public static final int FRAME_PADDING = 10;
     public static final int TITLE_BAR_HEIGHT = 20;
     public static final int CANVAS_RATE = CANVAS_SIZE / FIELD_SIZE;
     public static final int WINDOW_WIDTH = CANVAS_SIZE * N__CANVAS_ROW + FRAME_PADDING * (N__CANVAS_ROW + 1);

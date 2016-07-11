@@ -12,13 +12,16 @@ import static jp.yuta.util.Config.N_STEP;
  */
 public class ExchangeSimulation extends Simulation {
 
+    private int serviceId;
+
     private int step = 0;
     private MarketSimulation marketSimulation;
 
-    public ExchangeSimulation(List<Actor> actors) {
+    public ExchangeSimulation(List<Actor> actors, int serviceId) {
+        this.serviceId = serviceId;
         // TODO: 2016/07/12 serviceId
-        this.marketSimulation = new MarketSimulation(0, actors);
-        AppletManager.setActors(this.marketSimulation.getActors());
+        this.marketSimulation = new MarketSimulation(this.serviceId, actors);
+        AppletManager.setActors(this.marketSimulation.getActors(),this.serviceId);
     }
 
     @Override

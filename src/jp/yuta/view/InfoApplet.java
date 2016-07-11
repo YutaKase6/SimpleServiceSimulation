@@ -29,23 +29,29 @@ public class InfoApplet extends AbstractApplet {
     private static final String BEST_PAYOFF = "BestPayoff";
     private static final String BEST_N_CONSUMER = "BestNConsumers";
 
+    public InfoApplet(int serviceId) {
+        this.serviceId = serviceId;
+    }
+
     @Override
     public void draw(Graphics2D buffer) {
         Map<String, String> dataMap = new HashMap<>();
 
-        for (int i = 0; i < N_PROVIDER; i++) {
-            Actor actor = this.actors.get(i);
-            buffer.setColor(Color.black);
-            int y = START_Y + (i * DELTA_Y);
-            // 描画
-            dataMap.put(RESOURCE, "" + actor.getOperantResource(this.serviceId));
-            dataMap.put(PRICE, "" + actor.getPrice(this.serviceId));
-            dataMap.put(BEST_PRICE, "" + actor.getBestPrice(this.serviceId));
-            dataMap.put(BEST_PAYOFF, "" + actor.getBestPayoff(this.serviceId));
-            dataMap.put(BEST_N_CONSUMER, "" + actor.getBestNConsumer(this.serviceId));
-            this.drawRow(buffer, dataMap, y);
-            this.drawRect(buffer, i == nowProviderId, y, actor.getColor(this.serviceId));
-        }
+        this.actors.stream()
+                .filter(actor -> actor.isProvider(this.serviceId))
+                .forEach(actor -> {
+                    int i = actor.getId() % N_PROVIDER;
+                    buffer.setColor(Color.black);
+                    int y = START_Y + (i * DELTA_Y);
+                    // 描画
+                    dataMap.put(RESOURCE, "" + actor.getOperantResource(this.serviceId));
+                    dataMap.put(PRICE, "" + actor.getPrice(this.serviceId));
+                    dataMap.put(BEST_PRICE, "" + actor.getBestPrice(this.serviceId));
+                    dataMap.put(BEST_PAYOFF, "" + actor.getBestPayoff(this.serviceId));
+                    dataMap.put(BEST_N_CONSUMER, "" + actor.getBestNConsumer(this.serviceId));
+                    this.drawRow(buffer, dataMap, y);
+                    this.drawRect(buffer, i == nowProviderId, y, actor.getColor(this.serviceId));
+                });
 
         // 一行目
         dataMap.put(RESOURCE, RESOURCE);

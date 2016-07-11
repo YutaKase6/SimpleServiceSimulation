@@ -11,6 +11,9 @@ import static jp.yuta.util.Config.*;
  */
 public class ActorApplet extends AbstractApplet {
 
+    public ActorApplet(int serviceId) {
+        this.serviceId = serviceId;
+    }
 
     @Override
     public void draw(Graphics2D buffer) {

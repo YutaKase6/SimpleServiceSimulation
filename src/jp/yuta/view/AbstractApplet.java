@@ -44,10 +44,6 @@ public abstract class AbstractApplet extends JApplet {
         this.isInit = true;
     }
 
-    public void setServiceId(int serviceId) {
-        this.serviceId = serviceId;
-    }
-
     public void setNowProviderId(int nowProviderId) {
         this.nowProviderId = nowProviderId;
     }

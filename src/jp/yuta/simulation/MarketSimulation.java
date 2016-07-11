@@ -46,8 +46,8 @@ public class MarketSimulation extends Simulation {
         this.actors.stream().parallel()
                 .filter(actor -> actor.isProvider(this.serviceId))
                 .forEach(provider -> this.updatePrice(provider, provider.getBestPrice(this.serviceId)));
-        AppletManager.setNowProviderId(-1);
-        AppletManager.callRepaint();
+        AppletManager.setNowProviderId(-1, this.serviceId);
+        AppletManager.callRepaint(this.serviceId);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class MarketSimulation extends Simulation {
      * @param provider
      */
     private void simulatePrice(Actor provider) {
-        AppletManager.setNowProviderId(provider.getId());
+        AppletManager.setNowProviderId(provider.getId(), this.serviceId);
         // 現在の価格を保存(価格シミュレーションの後、他のProviderのシミュレーションのために求めた価格からシミュレーション前の価格に戻す必要があるため)
         int currentPrice = provider.getBestPrice(this.serviceId);
         provider.resetBest(this.serviceId);
@@ -77,7 +77,7 @@ public class MarketSimulation extends Simulation {
         int price = MIN_PRICE;
         while (price <= MAX_PRICE) {
             this.updatePrice(provider, price);
-            AppletManager.callRepaint();
+            AppletManager.callRepaint(this.serviceId);
             price += DELTA_PRICE;
 
             try {
@@ -136,10 +136,10 @@ public class MarketSimulation extends Simulation {
      */
     private int countConsumer(Actor provider) {
         if (!provider.isProvider(this.serviceId)) return -1;
-        int id = provider.getId();
+        int id = provider.getId() % N_PROVIDER;
         long count = this.actors.stream().parallel()
                 .filter(actor -> !actor.isProvider(this.serviceId))
-                .filter(actor -> actor.getSelectProviderId(this.serviceId) == id)
+                .filter(actor -> actor.getSelectProviderId(this.serviceId) == id % N_PROVIDER)
                 .count();
         return (int) count;
     }

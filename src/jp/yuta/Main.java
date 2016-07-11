@@ -18,7 +18,7 @@ public class Main {
     // Actorのリスト
     private static List<Actor> actors = new ArrayList<>(N_ACTOR);
 
-    private static ExchangeSimulation exchangeSimulation;
+    private static List<ExchangeSimulation> exchangeSimulations = new ArrayList<>(N_SERVICE);
 
     public static void main(String[] args) {
         // Applet初期設定
@@ -34,31 +34,19 @@ public class Main {
             actors.add(new Actor(pos, i));
         }
 
+        for (int serviceId = 0; serviceId < N_SERVICE; serviceId++) {
+            exchangeSimulations.add(new ExchangeSimulation(actors, serviceId));
+        }
+
         simulation();
-//        test();
     }
 
     // simulation呼び出し
     private static void simulation() {
-        exchangeSimulation = new ExchangeSimulation(actors);
-        exchangeSimulation.mainLoop();
-        exchangeSimulation.test();
+        exchangeSimulations.stream().parallel()
+                .forEach(exchangeSimulation -> {
+                    exchangeSimulation.mainLoop();
+                    exchangeSimulation.test();
+                });
     }
-
-    private static void test() {
-        final int N_TEST = 1;
-        List<Integer> countList = new ArrayList<>(N_TEST);
-        for (int i = 0; i < N_TEST; i++) {
-            simulation();
-            countList.add(exchangeSimulation.getStepCount());
-            System.out.println(i + ":" + exchangeSimulation.getStepCount());
-        }
-
-        int sum = countList.stream().mapToInt(Integer::intValue).sum();
-        double ave = sum / countList.size();
-        System.out.println(ave);
-
-    }
-
-
 }
