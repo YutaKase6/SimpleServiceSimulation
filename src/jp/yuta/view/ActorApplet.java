@@ -32,7 +32,7 @@ public class ActorApplet extends AbstractApplet {
         if (actor.isProvider(this.serviceId)) {
             // Provider
             // シミュレーション中のProviderを大きく表示
-            int size = (actor.getId() == this.nowProviderId) ? CANVAS_RATE * 4 : CANVAS_RATE * 2;
+            int size = (actor.getId() % N_PROVIDER == this.nowProviderId) ? CANVAS_RATE * 4 : CANVAS_RATE * 2;
             this.drawProvider(buffer, pos[0], pos[1], size, actor.getColor(this.serviceId));
         } else {
             // Consumer

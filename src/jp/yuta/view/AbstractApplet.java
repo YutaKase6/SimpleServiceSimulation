@@ -45,6 +45,6 @@ public abstract class AbstractApplet extends JApplet {
     }
 
     public void setNowProviderId(int nowProviderId) {
-        this.nowProviderId = nowProviderId;
+        this.nowProviderId = nowProviderId % N_PROVIDER;
     }
 }

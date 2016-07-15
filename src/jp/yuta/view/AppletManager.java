@@ -41,22 +41,28 @@ public class AppletManager {
 
     public static void initFrame() {
         JFrame mainFrame = new JFrame("Simple Simulation");
-        for(int serviceId = 0; serviceId < N_SERVICE; serviceId++) {
+        JTabbedPane tabbedPane = new JTabbedPane();
+        for (int serviceId = 0; serviceId < N_SERVICE; serviceId++) {
             applets.add(new ActorApplet(serviceId));
             infoApplets.add(new InfoApplet(serviceId));
         }
+        JPanel p = new JPanel();
+        for (int i = 0; i < N_SERVICE; i++) {
+            p.add(applets.get(i));
+            p.add(infoApplets.get(i));
+//            tabbedPane.addTab(""+i, applets.get(i));
+//            tabPanels.get(i).add(infoApplets.get(i));
+        }
+        mainFrame.add(p);
+//        tabbedPane.addTab("hoge", p);
+//        mainFrame.add(tabbedPane, BorderLayout.CENTER);
 
         mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         mainFrame.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         mainFrame.setVisible(true);
-        mainFrame.setLayout(null);
+//        mainFrame.setLayout(null);
 
-        for(int i = 0; i < N_SERVICE; i++) {
-            mainFrame.add(applets.get(i));
-            mainFrame.add(infoApplets.get(i));
-        }
-
-        for(int i = 0; i < N_SERVICE; i++) {
+        for (int i = 0; i < N_SERVICE; i++) {
             setBoundsOnGrid(applets.get(i), 0, i);
             setBoundsOnGrid(infoApplets.get(i), 1, i);
         }
@@ -70,9 +76,11 @@ public class AppletManager {
      * @param column    行番号
      * @param row       列番号
      */
+
     private static void setBoundsOnGrid(Component component, int column, int row) {
         int x = FRAME_PADDING * (row + 1) + CANVAS_SIZE * row;
         int y = FRAME_PADDING * (column + 1) + CANVAS_SIZE * column;
         component.setBounds(x, y, CANVAS_SIZE, CANVAS_SIZE);
     }
 }
+

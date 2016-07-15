@@ -10,14 +10,14 @@ public final class Config {
 
     public static final int RANDOM_SEED = 625;
 
-    public static final int N_SERVICE = 2;
-    public static final int N_STEP = 30;
+    public static final int N_SERVICE = 4;
+    public static final int N_STEP = 1;
     public static final int DIM = 2;
     public static final int N_ACTOR = 2010;
     public static final int N_PROVIDER = 10;
     public static final int FIELD_SIZE = 100;
 
-    public static final int MIN_OPERANT_RESOURCE = 1000;
+    public static final int MIN_OPERANT_RESOURCE = 3000;
     public static final int MAX_OPERANT_RESOURCE = 6000;
     public static final int SCORE_MU = 0;
     public static final int SCORE_SD = 1000;
@@ -32,9 +32,9 @@ public final class Config {
 
     public static final double RECALC_SCORE_PROBABILITY = 0.1;
 
-    public static final int STEP_SLEEP_TIME = 50;
+    public static final int STEP_SLEEP_TIME = 0;
 
-    public static final int N__CANVAS_ROW = 3;
+    public static final int N__CANVAS_ROW = N_SERVICE;
     public static final int N__CANVAS_COLUMN = 2;
     public static final int CANVAS_SIZE = 400;
     public static final int FRAME_PADDING = 10;
