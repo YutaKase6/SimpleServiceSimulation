@@ -1,6 +1,4 @@
-package jp.yuta.view;
-
-import jp.yuta.model.Actor;
+package jp.yuta.view.Applet;
 
 import java.awt.*;
 import java.util.HashMap;

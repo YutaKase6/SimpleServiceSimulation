@@ -2,7 +2,7 @@ package jp.yuta;
 
 import jp.yuta.model.Actor;
 import jp.yuta.simulation.ExchangeSimulation;
-import jp.yuta.view.AppletManager;
+import jp.yuta.view.Applet.AppletManager;
 import jp.yuta.view.ViewManager;
 
 import java.util.ArrayList;
@@ -25,7 +25,6 @@ public class Main {
 
     public static void main(String[] args) {
         // Applet初期設定
-
         appletManager.initFrame();
 
         // Actorのリストを生成

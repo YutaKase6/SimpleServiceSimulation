@@ -1,7 +1,6 @@
 package jp.yuta.simulation;
 
 import jp.yuta.model.Actor;
-import jp.yuta.view.AppletManager;
 import jp.yuta.view.ViewManager;
 
 import java.util.List;

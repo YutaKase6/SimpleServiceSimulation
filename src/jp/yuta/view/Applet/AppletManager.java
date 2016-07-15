@@ -1,9 +1,9 @@
-package jp.yuta.view;
+package jp.yuta.view.Applet;
 
 import jp.yuta.model.Actor;
+import jp.yuta.view.ViewManager;
 
 import javax.swing.*;
-import javax.swing.text.View;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import static jp.yuta.util.Config.*;
 /**
  * Created by yutakase on 2016/06/09.
  */
-public class AppletManager extends ViewManager{
+public class AppletManager extends ViewManager {
 
     private static List<ActorApplet> applets = new ArrayList<>(N_SERVICE);
     private static List<InfoApplet> infoApplets = new ArrayList<>(N_SERVICE);

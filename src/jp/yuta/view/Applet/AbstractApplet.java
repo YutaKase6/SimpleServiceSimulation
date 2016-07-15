@@ -1,4 +1,4 @@
-package jp.yuta.view;
+package jp.yuta.view.Applet;
 
 import jp.yuta.model.Actor;
 
