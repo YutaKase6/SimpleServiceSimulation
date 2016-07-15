@@ -3,6 +3,7 @@ package jp.yuta.view;
 import jp.yuta.model.Actor;
 
 import javax.swing.*;
+import javax.swing.text.View;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -13,33 +14,34 @@ import static jp.yuta.util.Config.*;
 /**
  * Created by yutakase on 2016/06/09.
  */
-public class AppletManager {
-
-//    public static ActorApplet applet;
-//    private static InfoApplet infoApplet;
+public class AppletManager extends ViewManager{
 
     private static List<ActorApplet> applets = new ArrayList<>(N_SERVICE);
     private static List<InfoApplet> infoApplets = new ArrayList<>(N_SERVICE);
 
-    private AppletManager() {
+    public AppletManager() {
     }
 
-    public static void callRepaint(int serviceId) {
+    @Override
+    public void callRepaint(int serviceId) {
         applets.get(serviceId).repaint();
         infoApplets.get(serviceId).repaint();
     }
 
-    public static void setActors(List<Actor> actors, int serviceId) {
+    @Override
+    public void setActors(List<Actor> actors, int serviceId) {
         applets.get(serviceId).setActors(actors);
         infoApplets.get(serviceId).setActors(actors);
     }
 
-    public static void setNowProviderId(int providerId, int serviceId) {
+    @Override
+    public void setNowProviderId(int providerId, int serviceId) {
         applets.get(serviceId).setNowProviderId(providerId);
         infoApplets.get(serviceId).setNowProviderId(providerId);
     }
 
-    public static void initFrame() {
+    @Override
+    public void initFrame() {
         JFrame mainFrame = new JFrame("Simple Simulation");
         JTabbedPane tabbedPane = new JTabbedPane();
         for (int serviceId = 0; serviceId < N_SERVICE; serviceId++) {

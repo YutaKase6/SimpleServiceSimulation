@@ -2,6 +2,7 @@ package jp.yuta.simulation;
 
 import jp.yuta.model.Actor;
 import jp.yuta.view.AppletManager;
+import jp.yuta.view.ViewManager;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,9 +20,12 @@ public class MarketSimulation extends Simulation {
     // 各Providerの価格がシミュレーション前後で変化したかどうかのフラグのマップ(Key:ProviderのID)、シミュレーションの終了判定に用いる
     private Map<Integer, Boolean> isPriceChangedMap = new HashMap<>(N_PROVIDER);
 
-    public MarketSimulation(int serviceId, List<Actor> actors) {
+    private ViewManager viewManager;
+
+    public MarketSimulation(int serviceId, List<Actor> actors, ViewManager viewManager) {
         this.serviceId = serviceId;
         this.actors = actors;
+        this.viewManager = viewManager;
         // Provider全員の価格を初期化
         this.actors.stream().parallel()
                 .filter(actor -> actor.isProvider(this.serviceId))
@@ -46,8 +50,8 @@ public class MarketSimulation extends Simulation {
         this.actors.stream().parallel()
                 .filter(actor -> actor.isProvider(this.serviceId))
                 .forEach(provider -> this.updatePrice(provider, provider.getBestPrice(this.serviceId)));
-        AppletManager.setNowProviderId(-1, this.serviceId);
-        AppletManager.callRepaint(this.serviceId);
+        this.viewManager.setNowProviderId(-1, this.serviceId);
+        this.viewManager.callRepaint(this.serviceId);
     }
 
     @Override
@@ -68,7 +72,7 @@ public class MarketSimulation extends Simulation {
      * @param provider
      */
     private void simulatePrice(Actor provider) {
-        AppletManager.setNowProviderId(provider.getId(), this.serviceId);
+        this.viewManager.setNowProviderId(provider.getId(), this.serviceId);
         // 現在の価格を保存(価格シミュレーションの後、他のProviderのシミュレーションのために求めた価格からシミュレーション前の価格に戻す必要があるため)
         int currentPrice = provider.getBestPrice(this.serviceId);
         provider.resetBest(this.serviceId);
@@ -77,7 +81,7 @@ public class MarketSimulation extends Simulation {
         int price = MIN_PRICE;
         while (price <= MAX_PRICE) {
             this.updatePrice(provider, price);
-            AppletManager.callRepaint(this.serviceId);
+            this.viewManager.callRepaint(this.serviceId);
             price += DELTA_PRICE;
 
             try {

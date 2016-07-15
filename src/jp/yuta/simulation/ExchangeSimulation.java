@@ -2,6 +2,7 @@ package jp.yuta.simulation;
 
 import jp.yuta.model.Actor;
 import jp.yuta.view.AppletManager;
+import jp.yuta.view.ViewManager;
 
 import java.util.List;
 
@@ -17,11 +18,13 @@ public class ExchangeSimulation extends Simulation {
     private int step = 0;
     private MarketSimulation marketSimulation;
 
-    public ExchangeSimulation(List<Actor> actors, int serviceId) {
+    private ViewManager viewManager;
+
+    public ExchangeSimulation(List<Actor> actors, int serviceId, ViewManager viewManager) {
         this.serviceId = serviceId;
-        // TODO: 2016/07/12 serviceId
-        this.marketSimulation = new MarketSimulation(this.serviceId, actors);
-        AppletManager.setActors(this.marketSimulation.getActors(),this.serviceId);
+        this.viewManager = viewManager;
+        this.marketSimulation = new MarketSimulation(this.serviceId, actors, this.viewManager);
+        viewManager.setActors(this.marketSimulation.getActors(), this.serviceId);
     }
 
     @Override

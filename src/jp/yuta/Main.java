@@ -3,6 +3,7 @@ package jp.yuta;
 import jp.yuta.model.Actor;
 import jp.yuta.simulation.ExchangeSimulation;
 import jp.yuta.view.AppletManager;
+import jp.yuta.view.ViewManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +21,12 @@ public class Main {
 
     private static List<ExchangeSimulation> exchangeSimulations = new ArrayList<>(N_SERVICE);
 
+    private static ViewManager appletManager = new AppletManager();
+
     public static void main(String[] args) {
         // Applet初期設定
-        AppletManager.initFrame();
+
+        appletManager.initFrame();
 
         // Actorのリストを生成
         int[] pos;
@@ -35,7 +39,7 @@ public class Main {
         }
 
         for (int serviceId = 0; serviceId < N_SERVICE; serviceId++) {
-            exchangeSimulations.add(new ExchangeSimulation(actors, serviceId));
+            exchangeSimulations.add(new ExchangeSimulation(actors, serviceId, appletManager));
         }
 
         simulation();
