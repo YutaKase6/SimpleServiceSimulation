@@ -1,8 +1,10 @@
 package jp.yuta.util;
 
+import java.util.List;
 import java.util.Random;
 
-import static jp.yuta.util.Config.*;
+import static jp.yuta.util.Config.DIM;
+import static jp.yuta.util.Config.FIELD_SIZE;
 
 /**
  * Utility
@@ -99,4 +101,24 @@ public final class CalcUtil {
         }
         return distVector;
     }
+
+    /**
+     * 引数のリストの中から最大値のインデックスを返す
+     *
+     * @param list リスト
+     * @return 最大値のインデックス
+     */
+    public static int getMaxValueIndex(List<Double> list) {
+        double max = 0;
+        int maxIndex = -1;
+        for (int i = 0; i < list.size(); i++) {
+            double n = list.get(i);
+            if (max < n) {
+                max = n;
+                maxIndex = i;
+            }
+        }
+        return maxIndex;
+    }
+
 }

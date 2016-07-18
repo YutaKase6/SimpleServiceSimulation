@@ -1,14 +1,15 @@
 package jp.yuta;
 
 import jp.yuta.model.Actor;
+import jp.yuta.model.Market;
 import jp.yuta.simulation.ExchangeSimulation;
+import jp.yuta.simulation.MarketSimulation;
 import jp.yuta.view.Applet.AppletManager;
 import jp.yuta.view.ViewManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static jp.yuta.util.CalcUtil.generateRandomDouble;
 import static jp.yuta.util.Config.*;
 
 /**
@@ -16,8 +17,7 @@ import static jp.yuta.util.Config.*;
  */
 public class Main {
 
-    // Actorのリスト
-    private static List<Actor> actors = new ArrayList<>(N_ACTOR);
+    private static Market market;
 
     private static List<ExchangeSimulation> exchangeSimulations = new ArrayList<>(N_SERVICE);
 
@@ -27,18 +27,12 @@ public class Main {
         // Applet初期設定
         appletManager.initFrame();
 
-        // Actorのリストを生成
-        int[] pos;
-        for (int i = 0; i < N_ACTOR; i++) {
-            pos = new int[DIM];
-            for (int j = 0; j < DIM; j++) {
-                pos[j] = (int) generateRandomDouble(0, FIELD_SIZE);
-            }
-            actors.add(new Actor(pos, i));
-        }
+        market = new Market();
+
+        appletManager.setActors(market.getActors());
 
         for (int serviceId = 0; serviceId < N_SERVICE; serviceId++) {
-            exchangeSimulations.add(new ExchangeSimulation(actors, serviceId, appletManager));
+            exchangeSimulations.add(new ExchangeSimulation(serviceId, market, appletManager));
         }
 
         simulation();

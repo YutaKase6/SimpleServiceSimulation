@@ -15,24 +15,18 @@ public class Actor {
     private int id;
     // 座標
     private int[] pos;
-    // 評価や能力といったサービスに関する情報
-//    private ServiceStatus serviceStatus;
+    // 評価や能力といったサービスに関する情報、サービスの種類分
     private List<ServiceStatus> serviceStatusList = new ArrayList<>(N_SERVICE);
 
 
     public Actor(int[] pos, int id) {
         this.id = id;
         this.pos = pos;
-        // 若いIDのActorが提供者
-        boolean isProvider = this.id < N_PROVIDER;
         // ProviderかConsumerか判定し、関する情報を生成
-//        this.serviceStatus = new ServiceStatus(isProvider);
         for (int serviceId = 0; serviceId < N_SERVICE; serviceId++) {
-            isProvider = (this.id / N_PROVIDER == serviceId);
+            boolean isProvider = (this.id / N_PROVIDER == serviceId);
             this.serviceStatusList.add(new ServiceStatus(this.id, serviceId, isProvider));
         }
-        // 色を決定
-//        this.color = colorList.get(this.id % colorList.size());
     }
 
     /**
@@ -43,7 +37,6 @@ public class Actor {
     public void updateValue(Actor provider, int serviceId) {
         // 距離や評価から、得られる価値のリストを更新
         double dist = calcDist(this.pos, provider.getPos());
-//        this.serviceStatus.updateValue(provider, dist);
         this.serviceStatusList.get(serviceId).updateValue(provider, dist);
     }
 
@@ -52,11 +45,7 @@ public class Actor {
      */
     public void updateSelectProvider(int serviceId) {
         // Providerを選択
-//        this.serviceStatus.updateSelectProvider();
         this.serviceStatusList.get(serviceId).updateSelectProvider();
-        // 最も価値を得られるProviderと同じ色に設定(価値がすべてマイナスの場合はグレーに)
-//        int selectedId = this.serviceStatus.getSelectProviderId();
-//        this.color = (selectedId == -1) ? Color.lightGray : colorList.get(selectedId);
     }
 
     /**

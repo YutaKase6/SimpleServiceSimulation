@@ -15,13 +15,16 @@ public abstract class Simulation {
             stepCount++;
             System.out.println(stepCount);
         }
+        close();
     }
 
-    public abstract void init();
+    protected abstract void init();
 
-    public abstract void step();
+    protected abstract void close();
 
-    public abstract boolean isSimulationFinish();
+    protected abstract void step();
+
+    protected abstract boolean isSimulationFinish();
 
     public int getStepCount() {
         return stepCount;

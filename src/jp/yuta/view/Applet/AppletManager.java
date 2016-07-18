@@ -29,9 +29,11 @@ public class AppletManager extends ViewManager {
     }
 
     @Override
-    public void setActors(List<Actor> actors, int serviceId) {
-        applets.get(serviceId).setActors(actors);
-        infoApplets.get(serviceId).setActors(actors);
+    public void setActors(List<Actor> actors) {
+        for (int i = 0; i < N_SERVICE; i++) {
+            applets.get(i).setActors(actors);
+            infoApplets.get(i).setActors(actors);
+        }
     }
 
     @Override

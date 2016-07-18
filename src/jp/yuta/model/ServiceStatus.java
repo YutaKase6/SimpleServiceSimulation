@@ -14,7 +14,7 @@ import static jp.yuta.util.MyColor.colorList;
 public class ServiceStatus {
 
     private int serviceId;
-
+    // Providerかどうか
     private boolean isProvider;
     // 色
     private Color color;
@@ -125,25 +125,6 @@ public class ServiceStatus {
     public void updateSelectProvider() {
         this.selectProviderId = getMaxValueIndex(this.valueList);
         this.color = (this.selectProviderId == -1) ? Color.lightGray : colorList.get(this.selectProviderId);
-    }
-
-    /**
-     * 引数のリストの中から最大値のインデックスを返す
-     *
-     * @param list リスト
-     * @return 最大値のインデックス
-     */
-    private static int getMaxValueIndex(List<Double> list) {
-        double max = 0;
-        int maxIndex = -1;
-        for (int i = 0; i < list.size(); i++) {
-            double n = list.get(i);
-            if (max < n) {
-                max = n;
-                maxIndex = i;
-            }
-        }
-        return maxIndex;
     }
 
     /**
