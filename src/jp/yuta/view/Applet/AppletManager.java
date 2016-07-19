@@ -9,7 +9,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static jp.yuta.util.Config.*;
+import static jp.yuta.util.Const.*;
 
 /**
  * Created by yutakase on 2016/06/09.

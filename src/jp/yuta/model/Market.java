@@ -3,8 +3,9 @@ package jp.yuta.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jp.yuta.util.CalcUtil.calcDist;
 import static jp.yuta.util.CalcUtil.generateRandomDouble;
-import static jp.yuta.util.Config.*;
+import static jp.yuta.util.Const.*;
 
 /**
  * 市場クラス
@@ -86,6 +87,23 @@ public class Market {
         this.actors.stream().parallel()
                 .filter(actor -> !actor.isProvider(serviceId))
                 .forEach(actor -> actor.updateScore(serviceId));
+    }
+
+    public void propagateScore(int serviceId) {
+        this.actors.stream()
+                .filter(actor -> !actor.isProvider(serviceId))
+                .forEach(actor -> actor.propagatedScore(serviceId));
+    }
+
+    public void createActorNetworks(int serviceId) {
+        this.actors.stream().parallel()
+                .filter(actor -> !actor.isProvider(serviceId))
+                .forEach(actor -> this.actors.stream().parallel()
+                        .filter(actor1 -> !actor1.isProvider(serviceId))
+                        .filter(actor1 -> calcDist(actor.getPos(), actor1.getPos()) < FRIEND_DIST)
+                        .filter(actor1 -> generateRandomDouble(0, 1) < ADD_FRIEND_PROBABILITY)
+                        .forEach(actor1 -> actor.addFriend(actor1, serviceId))
+                );
     }
 
     public List<Actor> getActors() {

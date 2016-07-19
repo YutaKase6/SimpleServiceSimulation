@@ -1,16 +1,14 @@
 package jp.yuta;
 
-import jp.yuta.model.Actor;
 import jp.yuta.model.Market;
 import jp.yuta.simulation.ExchangeSimulation;
-import jp.yuta.simulation.MarketSimulation;
 import jp.yuta.view.Applet.AppletManager;
 import jp.yuta.view.ViewManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static jp.yuta.util.Config.*;
+import static jp.yuta.util.Const.*;
 
 /**
  * Created by yutakase on 2016/06/02.

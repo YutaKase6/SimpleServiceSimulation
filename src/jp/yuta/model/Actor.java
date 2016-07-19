@@ -4,7 +4,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-import static jp.yuta.util.Config.*;
+import static jp.yuta.util.Const.*;
 import static jp.yuta.util.CalcUtil.*;
 
 /**
@@ -80,6 +80,14 @@ public class Actor {
         this.serviceStatusList.get(serviceId).updateScoreList();
     }
 
+    public void addFriend(Actor actor, int serviceId) {
+        this.serviceStatusList.get(serviceId).addFriend(actor);
+    }
+
+    public void propagatedScore(int serviceId) {
+        this.serviceStatusList.get(serviceId).propagatedScore();
+    }
+
     public int getId() {
         return this.id;
     }
@@ -128,4 +136,11 @@ public class Actor {
         return this.serviceStatusList.get(serviceId).getBestNConsumer();
     }
 
+    public List<Double> getScoreList(int serviceId) {
+        return this.serviceStatusList.get(serviceId).getScoreList();
+    }
+
+    public List<Actor> getFriends(int serviceId) {
+        return this.serviceStatusList.get(serviceId).getFriends();
+    }
 }

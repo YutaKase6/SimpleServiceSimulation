@@ -4,7 +4,8 @@ import jp.yuta.model.Actor;
 
 import java.awt.*;
 
-import static jp.yuta.util.Config.*;
+import static jp.yuta.util.CalcUtil.calcDistVector;
+import static jp.yuta.util.Const.*;
 
 /**
  * Created by yutakase on 2016/06/02.
@@ -21,6 +22,7 @@ public class ActorApplet extends AbstractApplet {
         this.actors.stream().filter(actor -> !actor.isProvider(this.serviceId) && actor.getSelectProviderId(this.serviceId) != this.nowProviderId).forEach(actor -> this.drawActor(buffer, actor));
         this.actors.stream().filter(actor -> !actor.isProvider(this.serviceId) && actor.getSelectProviderId(this.serviceId) == this.nowProviderId).forEach(actor -> this.drawActor(buffer, actor));
         this.actors.stream().filter(actor -> actor.isProvider(this.serviceId)).forEach(actor -> this.drawActor(buffer, actor));
+        this.actors.stream().filter(actor -> !actor.isProvider(this.serviceId)).forEach(actor -> this.drawNetwork(buffer, actor));
     }
 
     /**
@@ -49,5 +51,17 @@ public class ActorApplet extends AbstractApplet {
         g.fillRect(x * CANVAS_RATE - size / 2, y * CANVAS_RATE - size / 2, size, size);
         g.setColor(color);
         g.fillRect(x * CANVAS_RATE - size / 4, y * CANVAS_RATE - size / 4, size / 2, size / 2);
+    }
+
+    private void drawNetwork(Graphics2D g, Actor actor) {
+        g.setColor(Color.black);
+        java.util.List<Actor> friends = actor.getFriends(this.serviceId);
+        if (friends == null) return;
+        friends.stream().parallel().forEach(actor1 -> {
+            int x = actor.getPos()[0] * CANVAS_RATE;
+            int y = actor.getPos()[1] * CANVAS_RATE;
+            int[] distVector = calcDistVector(actor.getPos(), actor1.getPos());
+            g.drawLine(x, y, x + (distVector[0] * CANVAS_RATE), y + (distVector[1] * CANVAS_RATE));
+        });
     }
 }

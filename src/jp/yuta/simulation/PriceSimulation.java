@@ -4,7 +4,7 @@ import jp.yuta.model.Actor;
 import jp.yuta.model.Market;
 import jp.yuta.view.ViewManager;
 
-import static jp.yuta.util.Config.*;
+import static jp.yuta.util.Const.*;
 
 /**
  * 価格シミュレーションクラス
@@ -39,7 +39,7 @@ public class PriceSimulation extends Simulation {
     public void step() {
         // 価格更新
         this.market.updatePrice(this.provider, this.price, this.serviceId);
-        this.viewManager.callRepaint(this.serviceId);
+//        this.viewManager.callRepaint(this.serviceId);
         price += DELTA_PRICE;
 
         try {

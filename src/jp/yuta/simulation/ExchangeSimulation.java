@@ -3,7 +3,7 @@ package jp.yuta.simulation;
 import jp.yuta.model.Market;
 import jp.yuta.view.ViewManager;
 
-import static jp.yuta.util.Config.N_STEP;
+import static jp.yuta.util.Const.N_STEP;
 
 /**
  * サービス交換まで含めたシミュレーション
@@ -30,14 +30,18 @@ public class ExchangeSimulation extends Simulation {
 
     @Override
     public void step() {
+        System.out.println("ExchangeSimulation : " + this.stepCount);
+
         // 価格決定シミュレーション
         this.marketSimulation.mainLoop();
         // exchange
 
         // 能力上昇
         this.market.updateOperandResource(this.serviceId);
-        // recalc score
+        // 評価再計算
         this.market.updateScore(this.serviceId);
+        // 評価伝播
+        this.market.propagateScore(this.serviceId);
     }
 
     @Override

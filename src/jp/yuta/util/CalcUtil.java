@@ -3,8 +3,8 @@ package jp.yuta.util;
 import java.util.List;
 import java.util.Random;
 
-import static jp.yuta.util.Config.DIM;
-import static jp.yuta.util.Config.FIELD_SIZE;
+import static jp.yuta.util.Const.DIM;
+import static jp.yuta.util.Const.FIELD_SIZE;
 
 /**
  * Utility
@@ -27,7 +27,7 @@ public final class CalcUtil {
      */
     public static double generateRandomDouble(double min, double max) {
         if (randomGenerator == null) {
-            randomGenerator = new Random(Config.RANDOM_SEED);
+            randomGenerator = new Random(Const.RANDOM_SEED);
         }
         return randomGenerator.nextDouble() * (max - min) + min;
     }
@@ -41,7 +41,7 @@ public final class CalcUtil {
      */
     public static double generateRandomGaussian(double mu, double sd) {
         if (randomGenerator == null) {
-            randomGenerator = new Random(Config.RANDOM_SEED);
+            randomGenerator = new Random(Const.RANDOM_SEED);
         }
         return randomGenerator.nextGaussian() * sd + mu;
     }

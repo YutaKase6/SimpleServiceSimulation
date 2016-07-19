@@ -7,7 +7,7 @@ import jp.yuta.view.ViewManager;
 import java.util.HashMap;
 import java.util.Map;
 
-import static jp.yuta.util.Config.*;
+import static jp.yuta.util.Const.*;
 
 /**
  * 市場シミュレーション
@@ -32,6 +32,7 @@ public class MarketSimulation extends Simulation {
         this.market.getActors().stream().parallel()
                 .filter(actor -> actor.isProvider(this.serviceId))
                 .forEach(actor -> this.market.updatePrice(actor, 0, this.serviceId));
+        this.market.createActorNetworks(this.serviceId);
     }
 
     @Override
@@ -44,6 +45,8 @@ public class MarketSimulation extends Simulation {
 
     @Override
     public void step() {
+        System.out.println("MarketSimulation : " + this.stepCount);
+
         // 価格をMIN_PRICEからMAX_PRICEまで変更させるシミュレーション
         this.market.getActors().stream()
                 .filter(actor -> actor.isProvider(this.serviceId))

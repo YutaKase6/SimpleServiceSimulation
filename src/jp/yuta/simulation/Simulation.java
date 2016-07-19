@@ -13,7 +13,6 @@ public abstract class Simulation {
         while (isSimulationFinish()) {
             step();
             stepCount++;
-            System.out.println(stepCount);
         }
         close();
     }

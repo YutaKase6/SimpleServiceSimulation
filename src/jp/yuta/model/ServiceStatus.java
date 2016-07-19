@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static jp.yuta.util.CalcUtil.*;
-import static jp.yuta.util.Config.*;
+import static jp.yuta.util.Const.*;
 import static jp.yuta.util.MyColor.colorList;
 
 /**
@@ -41,6 +41,7 @@ public class ServiceStatus {
     // 移動する際、単位距離あたりどれだけコストがかかるか
     private double moveCost;
 
+    private List<Actor> friends = new ArrayList<>();
 
     public ServiceStatus(int actorId, int serviceId, boolean isProvider) {
         this.serviceId = serviceId;
@@ -161,18 +162,42 @@ public class ServiceStatus {
         // 交換したProviderを評価
         if (this.selectProviderId != -1) {
             if (this.scoreList.get(this.selectProviderId) == 0) {
-                // 初めて, 1000 or -1000 で評価
-                double score = (generateRandomDouble(0, 1) > 0.5) ? 1000.0 : -1000.0;
+                // 初めて
+                double score = generateRandomGaussian(SCORE_MU, SCORE_SD);
                 this.scoreList.set(this.selectProviderId, score);
             } else {
                 // リピート、一定確率で評価を上下
                 if (generateRandomDouble(0, 1) < RECALC_SCORE_PROBABILITY) {
-                    double deltaScore = (generateRandomDouble(0, 1) > 0.5) ? 100.0 : -100.0;
+                    double deltaScore = (generateRandomDouble(0, 1) > 0.5) ? DELTA_SCORE : DELTA_SCORE * -1;
                     double score = this.scoreList.get(this.selectProviderId);
                     this.scoreList.set(this.selectProviderId, score + deltaScore);
                 }
             }
         }
+    }
+
+    /**
+     * 評価伝播
+     */
+    public void propagatedScore() {
+        // 周りから伝播
+        this.friends.stream()
+                .filter(friend -> generateRandomDouble(0, 1) < FRIEND_PROPAGATION_PROBABILITY)// 確率的に伝播
+                .forEach(friend -> {
+                    List<Double> friendScoreList = friend.getScoreList(this.serviceId);
+                    // 伝播量係数
+                    double rate = 1 + generateRandomDouble(MIN_PROPAGATION_RATE, MAX_PROPAGATION_RATE);
+                    for (int i = 0; i < N_PROVIDER; i++) {
+                        double nowScore = this.scoreList.get(i);
+                        double friendScore = friendScoreList.get(i);
+                        double newScore = nowScore + (friendScore * rate);
+                        this.scoreList.set(i, newScore);
+                    }
+                });
+    }
+
+    public void addFriend(Actor actor) {
+        this.friends.add(actor);
     }
 
     public Color getColor() {
@@ -215,4 +240,11 @@ public class ServiceStatus {
         return bestNConsumer;
     }
 
+    public List<Double> getScoreList() {
+        return this.scoreList;
+    }
+
+    public List<Actor> getFriends() {
+        return this.friends;
+    }
 }
